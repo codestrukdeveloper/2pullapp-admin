@@ -1,0 +1,43 @@
+name: CI
+
+
+
+on:
+
+    push:
+        branches: ["main"]
+
+    pull_request:
+        branches: ['main']    
+
+
+jobs:
+    
+    build-admin:
+        runs-on: ubuntu-latest
+        
+        
+        
+        steps:
+
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Node Js
+              uses: actions/setup-node@v3
+              with:
+                node-version: '20'
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v2
+                
+            - name: Install dependencies
+              run:  pnpm install
+                
+            - name: Build Client 
+              run:  pnpm run build:admin
+  
+            - name: Lint Client
+              run: pnpm run lint:admin
+   
+                

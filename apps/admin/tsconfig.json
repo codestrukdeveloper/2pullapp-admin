@@ -1,6 +1,49 @@
 {
-  "extends": "@repo/typescript-config/nextjs.json",
+  // "extends": "@repo/typescript-config/nextjs.json",
+  "exclude": [
+    "node_modules"
+  ],
   "compilerOptions": {
+    
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ],
+    "target": "es2016",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "es2015.iterable"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": false,
+    "downlevelIteration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@/*": ["./*"],
+      
+      "react": [ "./node_modules/@types/react" ]
+
+    },
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
@@ -8,11 +51,13 @@
     ]
   },
   "include": [
+    "app",
     "next-env.d.ts",
-    "next.config.mjs",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": ["node_modules"]
+    "next.config.js",
+    ".next/types/**/*.ts",
+    "next.config.mjs"
+  ]
+
 }
