@@ -22,7 +22,7 @@
 
 */
 
-import React from 'react';
+import React, { useState } from 'react';
 // Chakra imports
 import {
   Box,
@@ -47,8 +47,12 @@ import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
+import { useAuthStore } from '../../admin/utils/authStore';
 
 export default function SignIn() {
+  const { login, isLoading, error } = useAuthStore();
+
+
   // Chakra color mode
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
@@ -65,8 +69,21 @@ export default function SignIn() {
     { bg: 'secondaryGray.300' },
     { bg: 'whiteAlpha.200' },
   );
+
+  // Form state
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (phoneNumber && password) {
+      console.log(typeof phoneNumber, typeof password, phoneNumber,password)
+      await login(phoneNumber, password);
+    }
+  };
+  
   return (
     <DefaultAuthLayout illustrationBackground={'@/img/auth/auth.png'}>
       <Flex
@@ -93,9 +110,16 @@ export default function SignIn() {
             fontWeight="400"
             fontSize="md"
           >
-            Enter your email and password to sign in!
+            Enter your phone number and password to sign in!
           </Text>
         </Box>
+
+        {error && (
+          <Text color="red.500" mb="20px" textAlign="center">
+            {error}
+          </Text>
+        )}
+
         <Flex
           zIndex="2"
           direction="column"
@@ -140,15 +164,17 @@ export default function SignIn() {
               color={textColor}
               mb="8px"
             >
-              Email<Text color={brandStars}>*</Text>
+              Phone Number<Text color={brandStars}>*</Text>
             </FormLabel>
             <Input
               isRequired={true}
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               variant="auth"
               fontSize="sm"
               ms={{ base: '0px', md: '0px' }}
-              type="email"
-              placeholder="mail@simmmple.com"
+              type="text"
+              placeholder="Enter your phone number"
               mb="24px"
               fontWeight="500"
               size="lg"
@@ -169,6 +195,8 @@ export default function SignIn() {
                 placeholder="Min. 8 characters"
                 mb="24px"
                 size="lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 type={show ? 'text' : 'password'}
                 variant="auth"
               />
@@ -211,6 +239,7 @@ export default function SignIn() {
             </Flex>
             <Button
               fontSize="sm"
+              onClick={handleSignIn}
               variant="brand"
               fontWeight="500"
               w="100%"
