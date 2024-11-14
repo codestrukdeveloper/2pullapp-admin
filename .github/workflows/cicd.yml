@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  APP_NAME: pullapp-admin
+  APP_NAME: 2pullapp-admin
 
 jobs:
   build:
@@ -39,17 +39,16 @@ jobs:
       - name: Lint Admin
         run: pnpm run lint:admin
 
-      # Make sure the build directory exists and contains files
-      - name: Check build directory
-        run: |
-          ls -la apps/admin/.next || echo "Build directory not found"
-          
-      - name: Upload build artifact
+      # Upload the entire admin directory
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: admin-build
-          path: apps/admin/.next/
-          if-no-files-found: error # This will make the workflow fail if no files are found
+          name: admin-dist
+          path: |
+            apps/admin/.next/
+            apps/admin/public/
+            apps/admin/package.json
+          if-no-files-found: error
 
   create-and-deploy:
     needs: build
@@ -60,12 +59,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Download the artifact at the correct location
-      - name: Download build artifact
+      - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: admin-build
-          path: apps/admin/.next
+          name: admin-dist
+          path: apps/admin
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -85,29 +83,58 @@ jobs:
             echo "Creating new Amplify app..."
             RESPONSE=$(aws amplify create-app --name ${{ env.APP_NAME }} \
               --platform WEB \
-              --custom-rules '[{"source": "/<*>","target": "/index.html","status": "404-200"}]')
+              --custom-rules '[
+                {"source": "/<*>","target": "/index.html","status": "200"},
+                {"source": "/<*>","target": "/index.html","status": "404"}
+              ]')
             APP_ID=$(echo $RESPONSE | jq -r '.app.appId')
             
             # Create branch
-            aws amplify create-branch --app-id $APP_ID --branch-name main
+            aws amplify create-branch --app-id $APP_ID --branch-name main \
+              --framework "Next.js - SSR" \
+              --stage PRODUCTION
           fi
           
           echo "AMPLIFY_APP_ID=$APP_ID" >> $GITHUB_ENV
           echo "appId=$APP_ID" >> $GITHUB_OUTPUT
 
-      - name: List files in build directory
+      - name: Create amplify.yml
         run: |
-          echo "Checking build directory contents:"
-          ls -la apps/admin/.next/
+          cat << EOF > amplify.yml
+          version: 1
+          applications:
+            - frontend:
+                phases:
+                  preBuild:
+                    commands:
+                      - npm install -g pnpm
+                      - pnpm install
+                  build:
+                    commands:
+                      - pnpm run build:admin
+                artifacts:
+                  baseDirectory: apps/admin/.next
+                  files:
+                    - '**/*'
+                cache:
+                  paths:
+                    - node_modules/**/*
+                    - .next/cache/**/*
+          EOF
 
       - name: Deploy to AWS Amplify
         run: |
-          cd apps/admin/.next
-          zip -r ../../deployment.zip ./*
+          # Create the deployment package
+          cd apps/admin
+          zip -r ../../deployment.zip .next/* public/* package.json
           cd ../../
-          
+
+          # Upload the amplify.yml
+          aws s3 cp amplify.yml s3://amplify-${AMPLIFY_APP_ID}/amplify.yml
+
+          # Start the deployment
           aws amplify start-deployment \
-            --app-id ${{ env.AMPLIFY_APP_ID }} \
+            --app-id ${AMPLIFY_APP_ID} \
             --branch-name main \
             --zip-file fileb://deployment.zip
 
