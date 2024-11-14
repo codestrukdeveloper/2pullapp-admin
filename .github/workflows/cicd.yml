@@ -9,8 +9,7 @@ on:
 env:
   AWS_REGION: us-east-1
   APP_NAME: 2pullapp-admin
-  # Specify the manually created S3 bucket name here
-  S3_BUCKET_NAME: amplify-2pullappadmin-bucket
+  S3_BUCKET_NAME: amplify-your-app-id-bucket
 
 jobs:
   build:
@@ -124,21 +123,15 @@ jobs:
                     - .next/cache/**/*
           EOF
 
-      - name: Deploy to AWS Amplify
+      - name: Upload the amplify.yml to S3 bucket
         run: |
-          # Create the deployment package
-          cd apps/admin
-          zip -r ../../deployment.zip .next/* public/* package.json
-          cd ../../
-
-          # Upload the amplify.yml to the manually created S3 bucket
           aws s3 cp amplify.yml s3://${{ env.S3_BUCKET_NAME }}/amplify.yml
 
-          # Start the deployment
+      - name: Start Amplify Deployment
+        run: |
           aws amplify start-deployment \
-            --app-id ${AMPLIFY_APP_ID} \
-            --branch-name main \
-            --zip-file fileb://deployment.zip
+            --app-id ${{ env.AMPLIFY_APP_ID }} \
+            --branch-name main
 
       - name: Output Amplify App URL
         run: |
