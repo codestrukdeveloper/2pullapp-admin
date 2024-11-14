@@ -1,4 +1,5 @@
 'use client';
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
@@ -11,6 +12,9 @@ import theme from "@/theme/theme"
 const createEmotionCache = () => {
   return createCache({ key: 'css' });
 };
+
+const queryClient = new QueryClient()
+
 
 export default function AppWrappers({ children }: { children: ReactNode }) {
   const [{ cache, flush }] = useState(() => {
@@ -51,8 +55,10 @@ export default function AppWrappers({ children }: { children: ReactNode }) {
   });
 
   return (
-    <CacheProvider value={cache}>
-      <ChakraProvider theme={theme}>{children}</ChakraProvider>
-    </CacheProvider>
+    <QueryClientProvider client={queryClient}>
+      <CacheProvider value={cache}>
+        <ChakraProvider theme={theme}>{children}</ChakraProvider>
+      </CacheProvider>
+    </QueryClientProvider>
   );
 }
