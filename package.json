@@ -7,6 +7,9 @@
     "dev": "turbo dev",
     "dev:admin": "turbo run dev --filter=admin",
     "lint": "turbo lint",
+
+    "test:admin": "turbo run test:admin --filter=admin",
+
     "lint:admin": "turbo run lint --filter=admin",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky"
