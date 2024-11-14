@@ -3,16 +3,13 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-
     "build:admin": "turbo run build --filter=admin",
-
     "dev": "turbo dev",
     "dev:admin": "turbo run dev --filter=admin",
-
     "lint": "turbo lint",
     "lint:admin": "turbo run lint --filter=admin",
-
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
@@ -22,5 +19,8 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "husky": "^9.1.6"
   }
 }
