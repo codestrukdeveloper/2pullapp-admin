@@ -58,6 +58,6 @@
     "next.config.js",
     ".next/types/**/*.ts",
     "next.config.mjs"
-  ]
+, "test/index.test"  ]
 
 }
