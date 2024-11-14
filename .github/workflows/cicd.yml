@@ -129,8 +129,19 @@ jobs:
           zip -r ../../deployment.zip .next/* public/* package.json
           cd ../../
 
-          # Upload the amplify.yml
-          aws s3 cp amplify.yml s3://amplify-${AMPLIFY_APP_ID}/amplify.yml
+          # Check if the S3 bucket exists, create it if not
+          BUCKET_NAME="amplify-${AMPLIFY_APP_ID}"
+          BUCKET_EXISTS=$(aws s3api head-bucket --bucket $BUCKET_NAME --query "Status" --output text 2>&1 || echo "not found")
+
+          if [ "$BUCKET_EXISTS" == "not found" ]; then
+            echo "Bucket doesn't exist, creating a new bucket..."
+            aws s3 mb s3://$BUCKET_NAME
+          else
+            echo "Bucket already exists."
+          fi
+
+          # Upload the amplify.yml to S3
+          aws s3 cp amplify.yml s3://$BUCKET_NAME/amplify.yml
 
           # Start the deployment
           aws amplify start-deployment \
