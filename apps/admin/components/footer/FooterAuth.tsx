@@ -37,7 +37,7 @@ export default function Footer(props: { [x: string]: any }) {
         mb={{ base: '20px', lg: '0px' }}
       >
         {' '}
-        &copy; {new Date().getFullYear()}
+        {/* &copy; {new Date().getFullYear()} */}
       
       </Text>
     
