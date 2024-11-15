@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useGetUSers } from '../utils/getUsers';
+import { useGetUsers } from '../utils/getUsers';
 import {
   Table,
   Thead,
@@ -22,7 +22,7 @@ import {
 import { DeleteIcon, EditIcon, ViewIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 const UserList = () => {
-  const { users, isLoading, fetchAllUsers, error } = useGetUSers();
+  const { users, isLoading, fetchAllUsers, error } = useGetUsers();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [token, setToken] = useState<string | null>(null);
@@ -59,7 +59,7 @@ const UserList = () => {
     } else {
       const lowerCaseQuery = searchQuery.toLowerCase();
       const filtered = users.filter(
-        (user) =>
+        (user: { name: string; email: string; phoneNumber: string | string[]; }) =>
           user.name.toLowerCase().includes(lowerCaseQuery) ||
           user.email.toLowerCase().includes(lowerCaseQuery) ||
           user.phoneNumber.includes(lowerCaseQuery)
