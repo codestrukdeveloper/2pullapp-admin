@@ -22,7 +22,8 @@
 
 */
 
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 // Chakra imports
 import {
   Box,
@@ -47,8 +48,12 @@ import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
+import { useAuthStore } from '../../admin/utils/authStore';
 
 export default function SignIn() {
+  const { login,token,isLoading, error } = useAuthStore();
+
+
   // Chakra color mode
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
@@ -65,8 +70,71 @@ export default function SignIn() {
     { bg: 'secondaryGray.300' },
     { bg: 'whiteAlpha.200' },
   );
+
+  // Form state
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
   const [show, setShow] = React.useState(false);
+  const [formErrors, setFormErrors] = useState({ phoneNumber: '', password: '' });
+  
   const handleClick = () => setShow(!show);
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    // Explicitly define the type of errors to match your state
+    let errors: { phoneNumber: string; password: string } = {
+      phoneNumber: '',
+      password: '',
+    };
+  
+    // Validate phone number
+    if (!phoneNumber) errors.phoneNumber = 'Phone number is required';
+    
+    // Validate password
+    if (!password) errors.password = 'Password is required';
+  
+    // Update the state with errors
+    setFormErrors(errors);
+  
+    // Check if all error values are empty strings
+    const noErrors = Object.values(errors).every((error) => error === '');
+  
+    if (noErrors) {
+      console.log(phoneNumber, password);
+      // Call the login function from Zustand store with the redirect callback
+      await login(phoneNumber, password, () => {
+        // This callback will trigger the redirection
+        router.push('/admin/default');
+      });
+    }
+    
+   
+  };
+  
+
+  // Handle input change and clear errors
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumber(e.target.value);
+    if (formErrors.phoneNumber) setFormErrors({ ...formErrors, phoneNumber: '' });
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (formErrors.password) setFormErrors({ ...formErrors, password: '' });
+  };
+  const router = useRouter();
+
+  // Redirect to dashboard if token is set
+  useEffect(() => {
+      const token = localStorage.getItem('token'); // Get token from local storage
+      if (token) {
+        console.log(token);
+        // Redirect to the dashboard if token exists
+        router.push('/admin/default');
+      }
+  }, [router]);
+
   return (
     <DefaultAuthLayout illustrationBackground={'@/img/auth/auth.png'}>
       <Flex
@@ -93,9 +161,12 @@ export default function SignIn() {
             fontWeight="400"
             fontSize="md"
           >
-            Enter your email and password to sign in!
+            Enter your phone number and password to sign in!
           </Text>
         </Box>
+
+
+
         <Flex
           zIndex="2"
           direction="column"
@@ -131,6 +202,12 @@ export default function SignIn() {
             </Text>
             <HSeparator />
           </Flex>
+
+          {error && (
+            <Text color="red.500" mb="20px" textAlign="center">
+              {error}
+            </Text>
+          )}
           <FormControl>
             <FormLabel
               display="flex"
@@ -140,19 +217,26 @@ export default function SignIn() {
               color={textColor}
               mb="8px"
             >
-              Email<Text color={brandStars}>*</Text>
+              Phone Number<Text color={brandStars}>*</Text>
             </FormLabel>
             <Input
               isRequired={true}
+              value={phoneNumber}
+              onChange={handlePhoneNumberChange}
               variant="auth"
               fontSize="sm"
               ms={{ base: '0px', md: '0px' }}
-              type="email"
-              placeholder="mail@simmmple.com"
+              type="text"
+              placeholder="Enter your phone number"
               mb="24px"
               fontWeight="500"
               size="lg"
             />
+            {formErrors.phoneNumber && (
+              <Text color="red.500" fontSize="sm" mb="16px">
+                {formErrors.phoneNumber}
+              </Text>
+            )}
             <FormLabel
               ms="4px"
               fontSize="sm"
@@ -169,6 +253,8 @@ export default function SignIn() {
                 placeholder="Min. 8 characters"
                 mb="24px"
                 size="lg"
+                value={password}
+                onChange={handlePasswordChange}
                 type={show ? 'text' : 'password'}
                 variant="auth"
               />
@@ -181,6 +267,11 @@ export default function SignIn() {
                 />
               </InputRightElement>
             </InputGroup>
+            {formErrors.password && (
+              <Text color="red.500" fontSize="sm" mb="16px">
+                {formErrors.password}
+              </Text>
+            )}
             <Flex justifyContent="space-between" align="center" mb="24px">
               <FormControl display="flex" alignItems="center">
                 <Checkbox
@@ -211,6 +302,7 @@ export default function SignIn() {
             </Flex>
             <Button
               fontSize="sm"
+              onClick={handleSignIn}
               variant="brand"
               fontWeight="500"
               w="100%"

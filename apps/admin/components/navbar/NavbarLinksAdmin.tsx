@@ -26,6 +26,10 @@ import { FaEthereum } from 'react-icons/fa';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import { MdInfoOutline, MdNotificationsNone } from 'react-icons/md';
 import routes from 'routes';
+import { useEffect, useState } from 'react';
+import {useAuthStore} from "../../app/admin/utils/authStore";
+import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
+
 export default function HeaderLinks(props: {
   secondary: boolean;
   onOpen: boolean | any;
@@ -47,7 +51,35 @@ export default function HeaderLinks(props: {
     '14px 17px 40px 4px rgba(112, 144, 176, 0.06)',
   );
   const borderButton = useColorModeValue('secondaryGray.500', 'whiteAlpha.200');
+  const [userName, setUserName] = useState<string | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null); // State for profile photo
+ 
+  const router = useRouter(); // Get the router instance
+  const { logout } = useAuthStore(); // Access the logout function from the store
 
+  const handleLogout = () => {
+    logout(); // Call logout function from the store
+    router.push('/auth/sign-in'); // Redirect to the sign-in page
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Call fetchUserProfile only if token is present
+      useAuthStore.getState().fetchUserProfile(token)
+        .then((profile) => {
+          setUserName(profile?.name || 'Guest'); // Assuming profile contains name
+          setProfilePhoto(profile?.profilePicUrl || null); // Set profile photo if available
+    
+        })
+        .catch((error) => {
+          console.error('Error fetching user profile:', error);
+        });
+    }else{
+      router.push('/auth/sign-in'); // Redirect to the sign-in page
+    }
+  }, []);
+  
   return (
     <Flex
       w={{ sm: '100%', md: 'auto' }}
@@ -254,9 +286,20 @@ export default function HeaderLinks(props: {
             borderRadius={'50%'}
           />
           <Center top={0} left={0} position={'absolute'} w={'100%'} h={'100%'}>
-            <Text fontSize={'xs'} fontWeight="bold" color={'white'}>
-              AP
-            </Text>
+          {profilePhoto ? (
+                <Image
+                  src={profilePhoto}
+                  alt="Profile"
+                  borderRadius="50%"
+                  objectFit="cover"
+                  w="100%"
+                  h="100%"
+                />
+              ) : (
+                <Text fontSize={'xs'} fontWeight="bold" color={'white'}>
+                  AP {/* Default initials or image fallback */}
+                </Text>
+              )}
           </Center>
         </MenuButton>
         <MenuList
@@ -279,7 +322,7 @@ export default function HeaderLinks(props: {
               fontWeight="700"
               color={textColor}
             >
-              👋&nbsp; Hey, Adela
+              👋&nbsp; Hey, {userName}
             </Text>
           </Flex>
           <Flex flexDirection="column" p="10px">
@@ -305,6 +348,7 @@ export default function HeaderLinks(props: {
               color="red.400"
               borderRadius="8px"
               px="14px"
+              onClick={handleLogout} // Add onClick here
             >
               <Text fontSize="sm">Log out</Text>
             </MenuItem>
