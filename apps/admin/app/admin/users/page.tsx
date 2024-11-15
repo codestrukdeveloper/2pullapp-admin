@@ -25,14 +25,20 @@ const UserList = () => {
   const { users, isLoading, fetchAllUsers, error } = useGetUSers();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const token = localStorage.getItem('token');
+  const [token, setToken] = useState<string | null>(null);
+
+  // Fetch token from localStorage on the client side
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+  }, []);
 
   // Color mode hooks
   const { colorMode, toggleColorMode } = useColorMode();
   const tableBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('black', 'white');
 
-  // Fetch users on component mount
+  // Fetch users once the token is available
   useEffect(() => {
     if (token) {
       fetchAllUsers(token);
@@ -43,8 +49,6 @@ const UserList = () => {
   useEffect(() => {
     if (users) {
       setFilteredUsers(users);
-      
-      console.log(filteredUsers.length);
     }
   }, [users]);
 
@@ -117,7 +121,7 @@ const UserList = () => {
             <Tbody>
               {filteredUsers && filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <Tr key={user._id}>
+                  <Tr key={user.id}>
                     <Td>{user.name}</Td>
                     <Td>{user.email}</Td>
                     <Td>{user.phoneNumber}</Td>
@@ -126,19 +130,19 @@ const UserList = () => {
                         <IconButton
                           aria-label="View"
                           icon={<ViewIcon />}
-                          onClick={() => handleView(user._id)}
+                          onClick={() => handleView(user.id)}
                           colorScheme="blue"
                         />
                         <IconButton
                           aria-label="Edit"
                           icon={<EditIcon />}
-                          onClick={() => handleEdit(user._id)}
+                          onClick={() => handleEdit(user.id)}
                           colorScheme="yellow"
                         />
                         <IconButton
                           aria-label="Delete"
                           icon={<DeleteIcon />}
-                          onClick={() => handleDelete(user._id)}
+                          onClick={() => handleDelete(user.id)}
                           colorScheme="red"
                         />
                       </Flex>
