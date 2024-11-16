@@ -7,28 +7,29 @@ import {
   Image,
   Text,
   useColorModeValue,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 // Custom components
-import Card from 'components/card/Card';
+import Card from "components/card/Card";
 // Assets
-import { MdEdit } from 'react-icons/md';
+import { MdEdit } from "react-icons/md";
 
-export default function Project(props: {
+export default function Club(props: {
   title: string;
   ranking: number | string;
   link: string;
   image: string | any;
   [x: string]: any;
+  subtitle: string;
 }) {
-  const { title, ranking, link, image, ...rest } = props;
+  const { title, ranking, link, subtitle, image, ...rest } = props;
   // Chakra Color Mode
-  const textColorPrimary = useColorModeValue('secondaryGray.900', 'white');
-  const textColorSecondary = 'gray.400';
-  const brandColor = useColorModeValue('brand.500', 'white');
-  const bg = useColorModeValue('white', 'navy.700');
+  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
+  const textColorSecondary = "gray.400";
+  const brandColor = useColorModeValue("brand.500", "white");
+  const bg = useColorModeValue("white", "navy.700");
   return (
-    <Card bg={bg} {...rest} p="14px">
-      <Flex align="center" direction={{ base: 'column', md: 'row' }}>
+    <Card bg={bg} {...rest} p="14px" mt={5}>
+      <Flex align="center" gap={2} direction={{ base: "column", md: "row" }}>
         <Image
           alt=""
           h="80px"
@@ -37,14 +38,22 @@ export default function Project(props: {
           borderRadius="8px"
           me="20px"
         />
-        <Box mt={{ base: '10px', md: '0' }}>
+        <Box mt={{ base: "10px", md: "0" }}>
+          <Text
+            color={textColorPrimary}
+            fontWeight="500"
+            fontSize="xl"
+            mb="4px"
+          >
+            {title}
+          </Text>
           <Text
             color={textColorPrimary}
             fontWeight="500"
             fontSize="md"
             mb="4px"
           >
-            {title}
+            {subtitle}
           </Text>
           <Flex>
             <Text
@@ -53,7 +62,7 @@ export default function Project(props: {
               fontSize="sm"
               me="4px"
             >
-              Project #{ranking} •{' '}
+              Project #{ranking} •{" "}
             </Text>
             <Link fontWeight="500" color={brandColor} href={link} fontSize="sm">
               See project details
