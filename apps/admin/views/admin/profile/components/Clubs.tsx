@@ -5,7 +5,9 @@ import Card from "components/card/Card";
 import { useGetClubs } from "@/app/admin/utils/getClubs";
 import Club from "@/views/admin/profile/components/Club";
 
+
 export default function Clubs() {
+  
   const { clubs, totalPages, currentPage, isLoading, error, fetchClubs } =
     useGetClubs();
 
