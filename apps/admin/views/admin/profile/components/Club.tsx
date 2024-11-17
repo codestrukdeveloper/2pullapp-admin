@@ -17,24 +17,28 @@ export default function Club(props: {
   title: string;
   ranking: number | string;
   link: string;
-  image: string | any;
-  [x: string]: any;
+  image: string; // Ensure image is passed as a string (URL)
   subtitle: string;
+  [x: string]: any;
 }) {
   const { title, ranking, link, subtitle, image, ...rest } = props;
+
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
   const brandColor = useColorModeValue("brand.500", "white");
   const bg = useColorModeValue("white", "navy.700");
+
   return (
     <Card bg={bg} {...rest} p="14px" mt={5}>
       <Flex align="center" gap={2} direction={{ base: "column", md: "row" }}>
+        {/* Image Rendering */}
         <Image
-          alt=""
+          alt="Club image"
           h="80px"
           w="80px"
-          src={image.src}
+          src={image} // Use image directly as it should be a URL string
+          fallbackSrc="/default-club.png" // Fallback for broken or missing images
           borderRadius="8px"
           me="20px"
         />
@@ -62,10 +66,10 @@ export default function Club(props: {
               fontSize="sm"
               me="4px"
             >
-              Project #{ranking} •{" "}
+              Clubs #{ranking} •{" "}
             </Text>
             <Link fontWeight="500" color={brandColor} href={link} fontSize="sm">
-              See project details
+              See clubs details
             </Link>
           </Flex>
         </Box>
