@@ -8,6 +8,7 @@ import Club from "@/views/admin/profile/components/Club";
 
 export default function Clubs() {
   
+  
   const { clubs, totalPages, currentPage, isLoading, error, fetchClubs } =
     useGetClubs();
 
@@ -97,12 +98,12 @@ export default function Clubs() {
             <Club 
               key={club._id}
               boxShadow={cardShadow}
-              image={club.thumbnail || "/default-club.png"}
+              image={club.thumbnail}
               title={club.name}
               subtitle={club.categories.join(", ") || "No categories available"}
               rating={club.rating || "N/A"}
               ranking={""}
-              link={"/editclub"}              
+              link={`/admin/club/${club._id}`}              
             />
           ))}
         </Box>
