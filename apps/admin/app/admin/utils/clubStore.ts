@@ -2,14 +2,17 @@ import { create } from "zustand";
 import axiosInstance from "../services/axiosInstance";
 import axios, { AxiosResponse } from "axios";
 
-// Define the interface for Club based on your existing context
+// Define the interface for Club based on the API response
 interface Club {
   _id: string;
   name: string;
   categories: string[];
-  thumbnail?: string;
-  rating?: number;
-  description?: string;
+  phoneNumber: string;
+  rating: string;
+  cuisines: string[];
+  dietaryOptions: string[];
+  capacity: number;
+  estimatedCostPerHead: number;
   // Add other fields as needed
 }
 
@@ -28,15 +31,6 @@ interface ClubState {
   ) => Promise<void>;
 }
 
-// Response data structure from the server
-interface FetchClubsResponse {
-  clubs: Club[];
-}
-
-interface FetchClubDetailsResponse {
-  club: Club;
-}
-
 // Utility function to extract error messages safely
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
@@ -46,31 +40,25 @@ const getErrorMessage = (error: unknown): string => {
 };
 
 // Create the Zustand store
-export const useClubStore = create<ClubState>((set) => ({
+export const useClubStore = create<ClubState>((set, get) => ({
   clubs: [],
   currentClub: null,
   isLoading: false,
   error: null,
 
   fetchClubs: async (token) => {
-    console.log("Fetching Clubs:", {
-      token: token ? "Token Present" : "No Token",
-    });
     set({ isLoading: true, error: null });
 
     try {
-      const response: AxiosResponse<FetchClubsResponse> =
-        await axiosInstance.get("/clubs", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      const response = await axiosInstance.get("/clubs", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      console.log("Fetched Clubs Data:", { clubs: response.data.clubs });
       set({ clubs: response.data.clubs, isLoading: false });
     } catch (err) {
       const errorMessage = getErrorMessage(err);
-      console.error("Fetch Clubs Error:", errorMessage);
       set({
         error: errorMessage,
         isLoading: false,
@@ -78,40 +66,29 @@ export const useClubStore = create<ClubState>((set) => ({
     }
   },
 
-  fetchClubDetails: async (token, clubId) => {
-    console.log("Fetching Club Details for ID:", clubId);
-    set({ isLoading: true, error: null });
-
+  fetchClubDetails: async (token: string, clubId: string) => {
+    set({ isLoading: true });
     try {
-      const response: AxiosResponse<FetchClubDetailsResponse> =
-        await axiosInstance.get(`/clubs/${clubId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-      console.log("Fetched Club Details:", { club: response.data });
+      const response = await axiosInstance.get(`api/v1/club/${clubId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const club = response.data.data;
+      set({ currentClub: club, isLoading: false });
+    } catch (error: any) {
       set({
-        currentClub: response.data.club,
+        error: error.response?.data?.message || "Failed to fetch club details",
         isLoading: false,
       });
-    } catch (err) {
-      const errorMessage = getErrorMessage(err);
-      console.error("Fetch Club Details Error:", errorMessage);
-      set({
-        error: errorMessage,
-        isLoading: false,
-      });
+      console.error("Error fetching club details:", error);
     }
   },
 
   updateClub: async (token, clubId, clubData) => {
-    console.log("Updating Club Details:", { clubId, clubData });
     set({ isLoading: true, error: null });
 
     try {
-      const response: AxiosResponse<Club> = await axiosInstance.put(
-        `/clubs/${clubId}`,
+      const response = await axiosInstance.put(
+        `/api/v1/admin/club/${clubId}`,
         clubData,
         {
           headers: {
@@ -120,14 +97,12 @@ export const useClubStore = create<ClubState>((set) => ({
         }
       );
 
-      console.log("Updated Club Details:", { club: response.data });
       set({
         currentClub: response.data,
         isLoading: false,
       });
     } catch (err) {
       const errorMessage = getErrorMessage(err);
-      console.error("Update Club Details Error:", errorMessage);
       set({
         error: errorMessage,
         isLoading: false,

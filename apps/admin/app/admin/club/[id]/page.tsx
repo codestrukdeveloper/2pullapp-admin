@@ -2,14 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { useClubStore } from "@/app/admin/utils/clubStore";
-import { Box, Spinner, Text, Input, Button, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Spinner,
+  Text,
+  Input,
+  Button,
+  Grid,
+  GridItem,
+  VStack,
+} from "@chakra-ui/react";
+
+import { useColorModeValue } from "@chakra-ui/react";
 
 export default function ClubDetailsPage({
   params,
 }: {
   params: { id: string };
-}) {
-  const { currentClub, isLoading, error, fetchClubDetails } = useClubStore();
+  }) {
+  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
+  const textColorSecondary = "gray.400";
+  const cardShadow = useColorModeValue(
+    "0px 18px 40px rgba(112, 144, 176, 0.12)",
+    "unset"
+  );
+
+
+  
+  const { currentClub, isLoading, error, fetchClubDetails, updateClub } =
+    useClubStore();
   const [clubName, setClubName] = useState("");
 
   useEffect(() => {
@@ -21,19 +42,24 @@ export default function ClubDetailsPage({
 
   useEffect(() => {
     if (currentClub) {
-      setClubName(currentClub.name); // Set the initial name from currentClub
+      setClubName(currentClub.name);
     }
   }, [currentClub]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setClubName(e.target.value); // Update the club name state
+    setClubName(e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add logic to handle the submission of the updated club name
-    // For example, you might call an update function here
-    console.log("Updated Club Name:", clubName);
+    const token = localStorage.getItem("token");
+    if (token && currentClub) {
+      try {
+        await updateClub(token, currentClub._id, { name: clubName });
+      } catch (error) {
+        console.error("Failed to update club name", error);
+      }
+    }
   };
 
   if (isLoading)
@@ -61,41 +87,100 @@ export default function ClubDetailsPage({
   return (
     <Box p={6}>
       <form onSubmit={handleSubmit}>
-        <Text fontSize="2xl" fontWeight="bold">
-          Edit Club
-        </Text>
-        <Text fontSize="lg" mt={2}>
-          Name:
-        </Text>
-        <Input
-          value={clubName}
-          onChange={handleNameChange}
-          placeholder="Enter club name"
-        />
-        <Text fontSize="lg" mt={4}>
-          Description:
-        </Text>
-        <Input value={currentClub.description} isDisabled readOnly />
-        <Text fontSize="lg" mt={4}>
-          Categories:
-        </Text>
-        <Input value={currentClub.categories.join(", ")} isDisabled readOnly />
-        <Text fontSize="lg" mt={4}>
-          Rating:
-        </Text>
-        <Input value={currentClub.rating} isDisabled readOnly />
-        {currentClub.thumbnail && (
-          <Image
-            src={currentClub.thumbnail}
-            alt={currentClub.name}
-            boxSize="200px"
-            objectFit="cover"
-            mt={4}
-          />
-        )}
-        <Button colorScheme="blue" mt={4} type="submit">
-          Save Changes
-        </Button>
+        <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
+          <GridItem colSpan={{ base: 1, md: 2 }}>
+            <Text fontSize="2xl" fontWeight="bold" mb={4}>
+              Edit Club Details
+            </Text>
+          </GridItem>
+
+          <GridItem>
+            <VStack spacing={4} align="stretch">
+              <Box>
+                <Text fontSize="lg" mb={2} color={textColorPrimary}>
+                  Name:
+                </Text>
+                <Input
+                  color={textColorPrimary}
+                  value={clubName}
+                  onChange={handleNameChange}
+                  placeholder="Enter club name"
+                />
+              </Box>
+
+              <Box>
+                <Text fontSize="lg" mb={2}>
+                  Phone Number:
+                </Text>
+                <Input
+                  color={textColorPrimary}
+                  value={currentClub.phoneNumber}
+                  isDisabled
+                  readOnly
+                />
+              </Box>
+
+              <Box>
+                <Text fontSize="lg" mb={2}>
+                  Rating:
+                </Text>
+                <Input
+                  color={textColorPrimary}
+                  value={currentClub.rating}
+                  isDisabled
+                  readOnly
+                />
+              </Box>
+            </VStack>
+          </GridItem>
+
+          <GridItem>
+            <VStack spacing={4} align="stretch">
+              <Box>
+                <Text fontSize="lg" mb={2}>
+                  Cuisines:
+                </Text>
+                <Input
+                  color={textColorPrimary}
+                  value={currentClub.cuisines.join(", ")}
+                  isDisabled
+                  readOnly
+                />
+              </Box>
+
+              <Box>
+                <Text fontSize="lg" mb={2}>
+                  Dietary Options:
+                </Text>
+                <Input
+                  color={textColorPrimary}
+                  value={currentClub.dietaryOptions.join(", ")}
+                  isDisabled
+                  readOnly
+                />
+              </Box>
+
+              <Box>
+                <Text fontSize="lg" mb={2}>
+                  Capacity:
+                </Text>
+                <Input
+                  value={currentClub.capacity}
+                  color={textColorPrimary}
+                  isDisabled
+                  readOnly
+                />
+              </Box>
+            </VStack>
+          </GridItem>
+          
+
+          <GridItem colSpan={{ base: 1, md: 2 }} width={"xs"}>
+            <Button colorScheme="blue" type="submit" width="full" mt={4}>
+              Save Changes
+            </Button>
+          </GridItem>
+        </Grid>
       </form>
     </Box>
   );
