@@ -1,19 +1,53 @@
 import { create } from "zustand";
 import axiosInstance from "../services/axiosInstance";
-import axios, { AxiosResponse } from "axios";
+
+// Define the interface for the API response
+interface ApiResponse<T> {
+  status: string;
+  message: string;
+  data: T;
+}
 
 // Define the interface for Club based on the API response
 interface Club {
   _id: string;
   name: string;
-  categories: string[];
   phoneNumber: string;
+  owner: string;
   rating: string;
   cuisines: string[];
   dietaryOptions: string[];
+  beveragesImages: string[];
+  facilities: any[];
+  categories: string[];
+  dressType: string[];
+  otherPhotos: any[];
+  images: string[];
+  venueType: string[];
+  socialMedia: any[];
+  menuImages: string[];
   capacity: number;
   estimatedCostPerHead: number;
-  // Add other fields as needed
+  clubSeat: {
+    name: string;
+    openDays: {
+      day: string;
+      slot: {
+        opensAt: string;
+        closeAt: string;
+      };
+    }[];
+    currency: string;
+    prices: any[];
+  }[];
+  temporaryClosed: boolean;
+  isDeleted: boolean;
+  isSuspended: boolean;
+  isComplete: boolean;
+  openToday: boolean;
+  createdAt: string;
+  updatedAt: string;
+  clubLocation: string;
 }
 
 // Define the store interface
@@ -33,12 +67,15 @@ interface ClubState {
 
 // Utility function to extract error messages safely
 const getErrorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    return error.response?.data?.message || "An unknown server error occurred.";
-  }
-  return (error as Error).message || "An unknown error occurred.";
-};
+  if (axiosInstance(error)) {
+   
+    if (error instanceof Error) {
+      return error.message || "An unexpected error occurred.";
+    }
 
+    return "An unhandled error occurred.";
+  };
+}
 // Create the Zustand store
 export const useClubStore = create<ClubState>((set, get) => ({
   clubs: [],
@@ -50,11 +87,14 @@ export const useClubStore = create<ClubState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await axiosInstance.get("/clubs", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response: ApiResponse<{ clubs: Club[] }> = await axiosInstance.get(
+        "/clubs",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       set({ clubs: response.data.clubs, isLoading: false });
     } catch (err) {
@@ -67,16 +107,19 @@ export const useClubStore = create<ClubState>((set, get) => ({
   },
 
   fetchClubDetails: async (token: string, clubId: string) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.get(`api/v1/club/${clubId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const club = response.data.data;
-      set({ currentClub: club, isLoading: false });
-    } catch (error: any) {
+      const response: ApiResponse<{ data: Club }> = await axiosInstance.get(
+        `api/v1/club/${clubId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      set({ currentClub: response.data.data, isLoading: false });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
       set({
-        error: error.response?.data?.message || "Failed to fetch club details",
+        error: errorMessage,
         isLoading: false,
       });
       console.error("Error fetching club details:", error);
@@ -87,7 +130,7 @@ export const useClubStore = create<ClubState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await axiosInstance.put(
+      const response: ApiResponse<Club> = await axiosInstance.put(
         `/api/v1/admin/club/${clubId}`,
         clubData,
         {

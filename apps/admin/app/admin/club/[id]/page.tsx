@@ -1,37 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useClubStore } from "@/app/admin/utils/clubStore";
 import {
   Box,
   Spinner,
   Text,
-  Input,
-  Button,
   Grid,
   GridItem,
   VStack,
+  Heading,
+  Flex,
+
 } from "@chakra-ui/react";
 
 import { useColorModeValue } from "@chakra-ui/react";
+
+const DetailRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | string[] | number | undefined;
+}) => (
+  <Flex justifyContent="space-between" alignItems="center" width="full">
+    <Text fontWeight="medium" color="gray.600" flex="1">
+      {label}:
+    </Text>
+    <Text flex="1" textAlign="right">
+      {/* Convert array to string, handle undefined */}
+      {Array.isArray(value)
+        ? value.join(", ")
+        : value !== undefined
+          ? String(value)
+          : "N/A"}
+    </Text>
+  </Flex>
+);
 
 export default function ClubDetailsPage({
   params,
 }: {
   params: { id: string };
-  }) {
+}) {
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
-  const cardShadow = useColorModeValue(
-    "0px 18px 40px rgba(112, 144, 176, 0.12)",
-    "unset"
-  );
+  const brandColor = useColorModeValue("brand.500", "white");
+  const bg = useColorModeValue("white", "navy.700");
 
 
-  
-  const { currentClub, isLoading, error, fetchClubDetails, updateClub } =
-    useClubStore();
-  const [clubName, setClubName] = useState("");
+  const { currentClub, isLoading, error, fetchClubDetails } = useClubStore();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -40,33 +58,11 @@ export default function ClubDetailsPage({
     }
   }, [params.id, fetchClubDetails]);
 
-  useEffect(() => {
-    if (currentClub) {
-      setClubName(currentClub.name);
-    }
-  }, [currentClub]);
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setClubName(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    if (token && currentClub) {
-      try {
-        await updateClub(token, currentClub._id, { name: clubName });
-      } catch (error) {
-        console.error("Failed to update club name", error);
-      }
-    }
-  };
-
   if (isLoading)
     return (
-      <Box textAlign="center" mt="20px">
-        <Spinner size="lg" />
-        <Text>Loading...</Text>
+      <Box textAlign="center" mt="20px" w={"100%"}>
+        <Spinner size="xl" />
+        <Text>Loading club details...</Text>
       </Box>
     );
 
@@ -85,103 +81,97 @@ export default function ClubDetailsPage({
     );
 
   return (
-    <Box p={6}>
-      <form onSubmit={handleSubmit}>
-        <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
-          <GridItem colSpan={{ base: 1, md: 2 }}>
-            <Text fontSize="2xl" fontWeight="bold" mb={4}>
-              Edit Club Details
-            </Text>
-          </GridItem>
+    <Box p={6} mt={10}>
+      <Heading color={textColorPrimary} mb={6} textAlign="left">
+        Club Details
+      </Heading>
 
-          <GridItem>
-            <VStack spacing={4} align="stretch">
-              <Box>
-                <Text fontSize="lg" mb={2} color={textColorPrimary}>
-                  Name:
-                </Text>
-                <Input
-                  color={textColorPrimary}
-                  value={clubName}
-                  onChange={handleNameChange}
-                  placeholder="Enter club name"
-                />
-              </Box>
-
-              <Box>
-                <Text fontSize="lg" mb={2}>
-                  Phone Number:
-                </Text>
-                <Input
-                  color={textColorPrimary}
-                  value={currentClub.phoneNumber}
-                  isDisabled
-                  readOnly
-                />
-              </Box>
-
-              <Box>
-                <Text fontSize="lg" mb={2}>
-                  Rating:
-                </Text>
-                <Input
-                  color={textColorPrimary}
-                  value={currentClub.rating}
-                  isDisabled
-                  readOnly
-                />
-              </Box>
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+        gap={6}
+        color={textColorSecondary}
+      >
+        <GridItem>
+          <Box
+            bg={bg}
+            p={4}
+            borderRadius="md"
+            mb={4}
+            color={textColorSecondary}
+            height={"100%"}
+          >
+            <Heading size="md" mb={4}>
+              Basic Information
+            </Heading>
+            <VStack align="stretch" spacing={2}>
+              <DetailRow label="Name" value={currentClub.name} />
+              <DetailRow label="Phone Number" value={currentClub.phoneNumber} />
+              <DetailRow label="Rating" value={currentClub.rating} />
+              <DetailRow label="Cuisines" value={currentClub.cuisines} />
+              <DetailRow
+                label="Dietary Options"
+                value={currentClub.dietaryOptions}
+              />
             </VStack>
-          </GridItem>
+          </Box>
+        </GridItem>
 
-          <GridItem>
-            <VStack spacing={4} align="stretch">
-              <Box>
-                <Text fontSize="lg" mb={2}>
-                  Cuisines:
-                </Text>
-                <Input
-                  color={textColorPrimary}
-                  value={currentClub.cuisines.join(", ")}
-                  isDisabled
-                  readOnly
-                />
-              </Box>
-
-              <Box>
-                <Text fontSize="lg" mb={2}>
-                  Dietary Options:
-                </Text>
-                <Input
-                  color={textColorPrimary}
-                  value={currentClub.dietaryOptions.join(", ")}
-                  isDisabled
-                  readOnly
-                />
-              </Box>
-
-              <Box>
-                <Text fontSize="lg" mb={2}>
-                  Capacity:
-                </Text>
-                <Input
-                  value={currentClub.capacity}
-                  color={textColorPrimary}
-                  isDisabled
-                  readOnly
-                />
-              </Box>
+        <GridItem>
+          <Box
+            p={4}
+            borderRadius="md"
+            mb={4}
+            color={textColorSecondary}
+            bg={bg}
+            height={"100%"}
+          >
+            <Heading size="md" mb={4}>
+              Additional Details
+            </Heading>
+            <VStack align="stretch" spacing={2}>
+              <DetailRow label="Categories" value={currentClub.categories} />
+              <DetailRow label="Dress Type" value={currentClub.dressType} />
+              <DetailRow label="Venue Type" value={currentClub.venueType} />
+              <DetailRow label="Capacity" value={currentClub.capacity} />
+              <DetailRow
+                label="Estimated Cost Per Head"
+                value={`${currentClub.estimatedCostPerHead} AED`}
+              />
             </VStack>
-          </GridItem>
-          
+          </Box>
+        </GridItem>
 
-          <GridItem colSpan={{ base: 1, md: 2 }} width={"xs"}>
-            <Button colorScheme="blue" type="submit" width="full" mt={4}>
-              Save Changes
-            </Button>
-          </GridItem>
-        </Grid>
-      </form>
+        {/* Club Seats */}
+        <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Box
+            
+            p={4}
+            borderRadius="md"
+            color={textColorSecondary}
+            bg={bg}
+          >
+            <Heading size="md" mb={4}>
+              Club Seats
+            </Heading>
+            {currentClub.clubSeat.map((seat, index) => (
+              <Box key={index} mb={4}>
+                <Heading size="sm" mb={2}>
+                  {seat.name}
+                </Heading>
+                <VStack align="stretch" spacing={2}>
+                  {seat.openDays.map((day, dayIndex) => (
+                    <DetailRow
+                      key={dayIndex}
+                      label={day.day}
+                      value={`${new Date(day.slot.opensAt).toLocaleTimeString()} - ${new Date(day.slot.closeAt).toLocaleTimeString()}`}
+                    />
+                  ))}
+                </VStack>
+              </Box>
+            ))}
+          </Box>
+        </GridItem>
+      </Grid>
     </Box>
   );
 }

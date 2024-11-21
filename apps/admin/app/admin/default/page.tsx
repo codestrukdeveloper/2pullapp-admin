@@ -94,7 +94,7 @@ export default function Default() {
           name="Spend this month"
           value="$642.39"
         />
-        <MiniStatistics growth="+23%" name="Sales" value="$574.34" />
+        {/* <MiniStatistics growth="+23%" name="Sales" value="$574.34" />
         <MiniStatistics
           endContent={
             <Flex me="-16px" mt="10px">
@@ -118,8 +118,8 @@ export default function Default() {
           }
           name="Your balance"
           value="$1,000"
-        />
-        <MiniStatistics
+        /> */}
+        {/* <MiniStatistics
           startContent={
             <IconBox
               w="56px"
@@ -130,7 +130,7 @@ export default function Default() {
           }
           name="New Tasks"
           value="154"
-        />
+        /> */}
         <MiniStatistics
           startContent={
             <IconBox
@@ -147,21 +147,21 @@ export default function Default() {
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="20px">
+      {/* <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="20px">
         <TotalSpent />
         <WeeklyRevenue />
-      </SimpleGrid>
+      </SimpleGrid> */}
       <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap="20px" mb="20px">
-        <CheckTable tableData={tableDataCheck} />
+        {/* <CheckTable tableData={tableDataCheck} /> */}
         <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px">
-          <DailyTraffic />
+          {/* <DailyTraffic /> */}
           <PieCard />
         </SimpleGrid>
       </SimpleGrid>
       <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap="20px" mb="20px">
-        <ComplexTable tableData={tableDataComplex} />
+        {/* <ComplexTable tableData={tableDataComplex} /> */}
         <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px">
-          <Tasks />
+          {/* <Tasks /> */}
           {/* <MiniCalendar h="100%" minW="100%" selectRange={false} /> */}
         </SimpleGrid>
       </SimpleGrid>
