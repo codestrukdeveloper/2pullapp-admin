@@ -11,14 +11,15 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
+import { useGetUsers } from "@/app/admin/utils/getUsers";
 import { useGetClubs } from "@/app/admin/utils/getClubs";
 import Club from "@/views/admin/profile/components/Club";
 
 export default function Clubs() {
   const { clubs, totalPages, currentPage, isLoading, error, fetchClubs } =
     useGetClubs();
+  const { users, isLoading: usersLoading, error: usersError } = useGetUsers();
 
-  // State for filtering
   const [filteredClubs, setFilteredClubs] = useState(clubs);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -96,15 +97,30 @@ export default function Clubs() {
             color={textColorPrimary}
           />
         </Flex>
+        <Box
+          flexDirection={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          m={10}
+        >
+          <Flex justifyContent={"space-evenly"} alignItems={"center"}>
+              <Text color={textColorPrimary} fontWeight="bold" fontSize="lg">
+                Total Clubs: {filteredClubs.length}
+              </Text>
+              <Text color={textColorPrimary} fontWeight="bold" fontSize="lg">
+                Total Users: {users.length}
+              </Text>
+          </Flex>
+        </Box>
       </Box>
       <Text color={textColorSecondary} fontSize="md" mb="40px">
         Here you can find more details about your clubs. Keep your users engaged
         by providing meaningful information.
       </Text>
 
-      {/* Search/Filter Input */}
+      {/* for  Search/Filter Input */}
 
-      {/* in case  Loading */}
+      {/*  Loading */}
       {isLoading && (
         <Box textAlign="center" mt="20px">
           <Spinner size="lg" />

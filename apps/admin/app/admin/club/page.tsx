@@ -79,15 +79,9 @@ export default function Club() {
         // }}
         gap={{ base: "20px", xl: "20px" }}
       >
-        <Clubs
-          banner={banner}
-          avatar={avatar}
-          name="Adela Parkson"
-          job="Product Designer"
-          posts="17"
-          followers="9.7k"
-          following="274"
-        />
+      <Clubs
+          
+        /> 
         {/* <General
           gridArea={{ base: '2 / 1 / 3 / 2', lg: '1 / 2 / 2 / 3' }}
           minH="365px"
