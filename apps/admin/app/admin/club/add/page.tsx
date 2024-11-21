@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import {
   Box,
@@ -13,7 +13,7 @@ import {
   GridItem,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import useClubStore from "@/app/admin/utils/addClubs";
+import useClubStore from "@/app/admin/utils/addClub";
 
 const AddClub = () => {
   const [clubData, setClubData] = useState({
@@ -162,12 +162,7 @@ const AddClub = () => {
           />
         </FormControl>
 
-        <Button
-          type="submit"
-          colorScheme="blue"
-          isLoading={loading}
-          width="sm"
-        >
+        <Button type="submit" colorScheme="blue" isLoading={loading} width="sm">
           Create Club
         </Button>
       </VStack>

@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ReactComponentElement } from "react";
 
 export interface IRoute {
   name: string;
-  layout: string;
-  path?: string;
-  icon: ReactNode;
-  children?: IRoute[]; // Add this optional children property
+  layout: string; 
+  icon: ReactComponentElement | string;
+  secondary?: boolean;
+  path: string;
 }

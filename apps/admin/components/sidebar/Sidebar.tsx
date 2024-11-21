@@ -48,7 +48,7 @@ function Sidebar(props: SidebarProps) {
 
   // SIDEBAR
   return (
-    <Box display={{ sm: 'none', xl: 'block' }} position="fixed" minH="100%" >
+    <Box display={{ sm: 'none', xl: 'block' }} position="fixed" minH="100%">
       <Box
         bg={sidebarBg}
         transition={variantChange}
@@ -59,7 +59,6 @@ function Sidebar(props: SidebarProps) {
         overflowX="hidden"
         boxShadow={shadow}
       >
-        <Flex direction="column" alignItems={"center"} justifyContent={"center"} h="100%">
         <Scrollbars
           autoHide
           renderTrackVertical={renderTrack}
@@ -67,9 +66,7 @@ function Sidebar(props: SidebarProps) {
           renderView={renderView}
         >
           <Content routes={routes} />
-          
-          </Scrollbars>
-          </Flex>
+        </Scrollbars>
       </Box>
     </Box>
   );

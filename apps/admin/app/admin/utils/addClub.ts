@@ -6,7 +6,7 @@ interface ClubState {
   createClub: (formData: FormData) => Promise<void>;
 }
 
-const useClubStore = create<ClubState>((set) => ({
+const addClub = create<ClubState>((set) => ({
   loading: false,
   error: null,
   createClub: async (formData: FormData) => {
@@ -29,4 +29,4 @@ const useClubStore = create<ClubState>((set) => ({
   },
 }));
 
-export default useClubStore;
+export default addClub;
