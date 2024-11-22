@@ -7,7 +7,7 @@
 //   secondary?: boolean;
 //   path: string;
 // }
-import { IconType } from "react-icons";
+import { IconType } from 'react-icons';
 
 export interface IRoute {
   name: string;
@@ -15,7 +15,7 @@ export interface IRoute {
   path?: string;
   icon?: IconType;
   secondary?: boolean;
-
+  
   // Add children explicitly to the type
   children?: Array<{
     name: string;
