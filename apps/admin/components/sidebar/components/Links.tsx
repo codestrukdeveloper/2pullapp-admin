@@ -121,7 +121,6 @@ export function SidebarLinks(props: SidebarLinksProps) {
           </Link>
         );
       }
-
     });  };
   //  BRAND
   return <>{createLinks(routes)}</>;
