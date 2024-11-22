@@ -8,7 +8,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en">
-      <body id={'root'} className={montserrat.className}>
+      <body id={'root'} className={montserrat.className} suppressHydrationWarning>
         <AppWrappers>{children}</AppWrappers>
       </body>
     </html>
