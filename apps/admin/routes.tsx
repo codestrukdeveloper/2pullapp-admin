@@ -113,8 +113,7 @@ const routes: IRoute[] = [
     name: "Users",
     layout: "/admin",
     path: "/users",
-    icon: "MdPerson",
+    icon: MdPerson,
   },
 ];
-
 export default routes;
