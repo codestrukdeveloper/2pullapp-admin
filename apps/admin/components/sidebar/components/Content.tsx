@@ -45,6 +45,7 @@ import {
   useColorModeValue,
   Icon,
   Link as ChakraLink,
+  Divider,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { IRoute } from "types/navigation";
@@ -101,6 +102,8 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
                     <ChakraLink
                       display="flex"
                       alignItems="center"
+                      gap={2}
+                      fontWeight="bold"
                       ps="10px"
                       pt="3px"
                       pb="3px"
@@ -109,7 +112,7 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
                         color: brandColor,
                       }}
                     >
-                      <Text color={textColor} fontSize="sm" fontWeight="normal">
+                      <Text color={textColor} fontSize="md" fontWeight="normal">
                         {child.name}
                       </Text>
                     </ChakraLink>
@@ -153,7 +156,18 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
   };
 
   return (
-    <Box>{routes.map((route, index) => renderRouteItem(route, index))}</Box>
+    <Box mt={5} mb={5}>
+      <Flex color={textColor}
+        placeItems={"center"}
+        alignItems={"center"}
+        justifyContent={"center"}
+      >
+        <Text size={"md"}>Brand</Text>
+        
+      </Flex>
+<Divider/>
+      {routes.map((route, index) => renderRouteItem(route, index))}
+    </Box>
   );
 };
 

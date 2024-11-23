@@ -10,6 +10,7 @@ import {
   useDisclosure,
   DrawerContent,
   DrawerCloseButton,
+  Text,
 } from "@chakra-ui/react";
 import Content from "./components/Content";
 import {

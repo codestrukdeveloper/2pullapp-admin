@@ -40,8 +40,10 @@ export default function ClubDetailsPage({
 }: {
   params: { id: string };
 }) {
-  const textColorPrimary = useColorModeValue("gray.900", "white");
   const bg = useColorModeValue("white", "gray.800");
+  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
+  const textColorSecondary = "gray.400";
+  const brandColor = useColorModeValue("brand.500", "white");
 
   const { currentClub, isLoading, error, fetchClubDetails } = useClubStore();
 
@@ -79,16 +81,15 @@ export default function ClubDetailsPage({
       maxW="800px"
       mx="auto"
       mt="10"
-      bg={bg}
       p={8}
       borderRadius="md"
       boxShadow="sm"
     >
-      <Heading color={textColorPrimary} mb={6}>
+      <Heading >
         Club Details
       </Heading>
-
-      <Box mb={8}>
+<Divider my={6} size={"md"} />
+      <Box mb={8}  bg={textColorPrimary} p={5} color={"black"} borderRadius={"md"}> 
         <Heading size="md" mb={4}>
           Basic Information
         </Heading>
@@ -106,11 +107,11 @@ export default function ClubDetailsPage({
 
       <Divider my={6} size={"md"} />
 
-      <Box mb={8}>
-        <Heading size="md" mb={4}>
+      <Box mb={8}  bg={textColorPrimary} p={5}  borderRadius={"md"}>
+        <Heading size="md" mb={4} color={"black"}>
           Additional Details
         </Heading>
-        <VStack align="stretch" spacing={4}>
+        <VStack align="stretch" spacing={4} color={textColorSecondary}>
           <DetailRow label="Categories" value={currentClub.categories} />
           <DetailRow label="Dress Type" value={currentClub.dressType} />
           <DetailRow label="Venue Type" value={currentClub.venueType} />
@@ -124,7 +125,7 @@ export default function ClubDetailsPage({
 
       <Divider my={6} />
 
-      <Box>
+      <Box bg={textColorPrimary} color={"black"} p={4} borderRadius="md">
         <Heading size="md" mb={4}>
           Club Seats
         </Heading>

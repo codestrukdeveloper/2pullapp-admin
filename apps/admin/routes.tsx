@@ -75,44 +75,96 @@
 
 
 
+// import { IRoute } from "types/navigation";
+// import { MdHome, MdLock, MdPerson } from "react-icons/md";
 
+// const routes: IRoute[] = [
+//   {
+//     name: "Main Dashboard",
+//     layout: "admin",
+//     path: "/default", 
+//     icon: MdHome,
+//   },
+//   {
+//     name: "Profile",
+//     layout: "admin",
+//     path: "/profile", 
+//     icon: MdLock,
+//   },
+//   {
+//     name: "Sign In",
+//     layout: '/auth',
+//     path: '/sign-in',
+//     icon: MdLock,
+//   },
+//   {
+//     name: "Clubs",
+//     layout: "admin",
+//     icon: MdHome,
+//     children: [
+//       {
+//         name: "Clubs",
+//         layout: "admin",
+//         path: "club", 
+//       },
+//       {
+//         name: "Add Clubs",
+//         layout: "admin",
+//         path: "club/add", 
+//       },
+//     ],
+//   },
+//   {
+//     name: "Users",
+//     layout: "admin",
+//     path: "users", 
+//     icon: MdPerson,
+//   },
+// ];
+// export default routes;
 import { IRoute } from "types/navigation";
-import { MdHome, MdLock, MdOutlineShoppingCart,MdPerson  } from "react-icons/md";
+import { MdHome, MdLock, MdPerson } from "react-icons/md";
 
 const routes: IRoute[] = [
   {
     name: "Main Dashboard",
-    layout: "/admin",
-    path: "/default",
+    layout: "admin",
+    path: "default", 
     icon: MdHome,
   },
+  // {
+  //   name: "Profile",
+  //   layout: "admin",
+  //   path: "profile", 
+  //   icon: MdLock,
+  // },
   {
-    name: "Profile",
-    layout: "/admin",
-    path: "/profile",
+    name: "Sign In",
+    layout: '/auth',
+    path: '/sign-in',
     icon: MdLock,
   },
   {
     name: "Clubs",
-    layout: "/admin",
+    layout: "admin",
     icon: MdHome,
     children: [
       {
         name: "Clubs",
-        layout: "/admin",
-        path: "/clubs",
+        layout: "admin",
+        path: "club", 
       },
       {
         name: "Add Clubs",
-        layout: "/admin",
-        path: "/clubs/add",
+        layout: "admin",
+        path: "club/add", 
       },
     ],
   },
   {
     name: "Users",
-    layout: "/admin",
-    path: "/users",
+    layout: "admin",
+    path: "users", 
     icon: MdPerson,
   },
 ];
