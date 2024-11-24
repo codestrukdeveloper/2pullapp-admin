@@ -7,9 +7,7 @@
     "dev": "turbo dev",
     "dev:admin": "turbo run dev --filter=admin",
     "lint": "turbo lint",
-
     "test:admin": "turbo run test:admin --filter=admin",
-
     "lint:admin": "turbo run lint --filter=admin",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky"
@@ -25,5 +23,12 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "admin": "^1.4.1",
+    "chart.js": "^4.4.6",
+    "install": "^0.13.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-hot-toast": "^2.4.1"
   }
 }

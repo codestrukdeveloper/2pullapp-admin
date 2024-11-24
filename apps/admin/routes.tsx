@@ -78,6 +78,7 @@
 
 import { IRoute } from "types/navigation";
 import { MdHome, MdLock, MdPerson } from "react-icons/md";
+import { FaRegUser, FaPlus, FaUserPlus, FaRegBuilding } from "react-icons/fa6";
 
 const routes: IRoute[] = [
   {
@@ -100,25 +101,45 @@ const routes: IRoute[] = [
   {
     name: "Clubs",
     layout: "admin",
-    icon: MdHome,
+    icon: FaRegBuilding,
     children: [
       {
         name: "Clubs",
         layout: "admin",
         path: "club",
+        icon: FaRegBuilding,
       },
       {
         name: "Add Clubs",
         layout: "admin",
         path: "club/add",
+        icon: FaPlus,
       },
     ],
   },
   {
     name: "Users",
     layout: "admin",
-    path: "users",
-    icon: MdPerson,
+    icon: FaRegUser,
+    children: [
+      {
+        name: "User",
+        layout: "admin",
+        path: "users",
+        icon: MdPerson,
+      },
+      {
+        name: "Add Clubs",
+        layout: "admin",
+        path: "users/addUser",
+        icon: FaUserPlus,
+      },
+    ],
   },
+  // {
+  //   name: "Users",
+  //   layout: "admin",
+  //   path: "users",
+  // },
 ];
 export default routes;

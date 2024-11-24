@@ -1,14 +1,14 @@
 import { Box } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 import AppWrappers from './AppWrappers';
-import { Montserrat} from "next/font/google";
+import { Raleway } from "next/font/google";
 
-const montserrat = Montserrat({ subsets: ["latin"] });
+const raleway =Raleway({ subsets: ["latin"], weight: ['400', '500', '600', '700', '800', '900'] });
 export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en">
-      <body id={'root'} className={montserrat.className} suppressHydrationWarning>
+      <body id={'root'} className={raleway.className} suppressHydrationWarning>
         <AppWrappers>{children}</AppWrappers>
       </body>
     </html>

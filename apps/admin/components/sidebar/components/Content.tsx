@@ -66,15 +66,16 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
             <AccordionButton
               display="flex"
               alignItems="center"
-              justifyContent="space-between"
+              justifyContent="space-evently"
               px="16px"
               py="10px"
               borderRadius="8px"
+              gap={36}
               _hover={{
                 bg: useColorModeValue("gray.100", "whiteAlpha.100"),
               }}
             >
-              <Flex align="center">
+              <Flex align="center" justifyContent={"space-evenly"}>
                 {route.icon && (
                   <Icon
                     as={route.icon}
@@ -104,6 +105,7 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
                       alignItems="center"
                       gap={2}
                       fontWeight="bold"
+                      justifyContent={"space-between"}
                       ps="10px"
                       pt="3px"
                       pb="3px"
@@ -113,6 +115,13 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
                       }}
                     >
                       <Text color={textColor} fontSize="md" fontWeight="normal">
+                        <Icon
+                          as={child.icon}
+                          color={textColor}
+                          me="12px"
+                          w="20px"
+                          h="20px"
+                        />
                         {child.name}
                       </Text>
                     </ChakraLink>
