@@ -70,7 +70,7 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
               px="16px"
               py="10px"
               borderRadius="8px"
-              gap={36}
+              gap={40}
               _hover={{
                 bg: useColorModeValue("gray.100", "whiteAlpha.100"),
               }}

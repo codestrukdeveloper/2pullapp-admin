@@ -24,9 +24,6 @@ import {
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
 
-// Existing Components
-import TotalSpent from "views/admin/default/components/TotalSpent";
-import PieCard from "views/admin/default/components/PieCard";
 
 // Dynamic ApexCharts Import
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -51,8 +48,8 @@ export default function Default() {
   const { token } = useAuthStore();
 
   // Color Modes
-  const brandColor = useColorModeValue("brand.500", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const brandColor = useColorModeValue("brand.100", "white");
+  const boxBg = useColorModeValue("secondaryGray.500", "black");
 
   // Data Fetching
   useEffect(() => {
@@ -67,6 +64,10 @@ export default function Default() {
     chart: {
       type: "bar" as const,
       height: 250,
+      
+      toolbar: {
+        show: false,
+      },
     },
     plotOptions: {
       bar: {
@@ -75,6 +76,7 @@ export default function Default() {
         borderRadius: 5,
       },
     },
+
     xaxis: {
       categories: ["Current Revenue", "Previous Revenue"],
     },
@@ -86,7 +88,13 @@ export default function Default() {
     title: {
       text: `${period.charAt(0).toUpperCase() + period.slice(1)} Revenue`,
       align: "center",
+      style: {
+        fontSize: "20px",
+        fontWeight: "bold",
+        color: brandColor,
+      }
     },
+  
   };
 
   const chartSeries = [
@@ -168,7 +176,7 @@ export default function Default() {
             />
           }
           name="Earnings"
-          value="$350.400000"
+          value="$350.400"
         />
         <MiniStatistics
           startContent={
@@ -204,6 +212,7 @@ export default function Default() {
         <HStack justifyContent="center" spacing={4} width="full">
           {["Daily", "Weekly", "Monthly"].map((periodOption) => (
             <Button
+              color={"white"}
               key={periodOption}
               onClick={() => setPeriod(periodOption.toLowerCase() as any)}
               colorScheme={

@@ -8,44 +8,27 @@ import {
   Text,
   VStack,
   Heading,
-  Flex,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
   Divider,
-  Grid,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { useColorModeValue } from "@chakra-ui/react";
-
-const DetailRow = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | string[] | number | undefined;
-}) => (
-  <Flex justifyContent="space-between" alignItems="center" width="100%">
-    <Text fontWeight="medium" color="gray.600" flex="1">
-      {label}:
-    </Text>
-    <Text flex="1" textAlign="right">
-      {Array.isArray(value)
-        ? value.join(", ")
-        : value !== undefined
-          ? String(value)
-          : "N/A"}
-    </Text>
-  </Flex>
-);
 
 export default function ClubDetailsPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const bg = useColorModeValue("white", "gray.800");
-  const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
-  const textColorSecondary = "gray.400";
-  const brandColor = useColorModeValue("brand.500", "white");
-
   const { currentClub, isLoading, error, fetchClubDetails } = useClubStore();
+
+  // Background and color theming
+  const bgColor = useColorModeValue("white", "gray.800");
+  const tableHeaderBg = useColorModeValue("gray.100", "gray.700");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -54,102 +37,118 @@ export default function ClubDetailsPage({
     }
   }, [params.id, fetchClubDetails]);
 
-  if (isLoading)
-    return (
-      <Box textAlign="center" mt="20px" w="100%">
-        <Spinner size="xl" />
-        <Text>Loading club details...</Text>
-      </Box>
-    );
-
-  if (error)
-    return (
-      <Box textAlign="center" mt="20px" color="red.500">
-        <Text>{error}</Text>
-      </Box>
-    );
-
-  if (!currentClub)
-    return (
-      <Box textAlign="center" mt="20px">
-        <Text>No club found</Text>
-      </Box>
-    );
+  // Loading and error states
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage error={error} />;
+  if (!currentClub) return <NoClubFound />;
 
   return (
-    <Box
-      maxW="800px"
-      mx="auto"
-      mt="10"
-      p={8}
-      borderRadius="md"
-      boxShadow="sm"
-    >
-      <Heading >
+    <Box maxW="container.xl" mx="auto" mt={10} p={6}>
+      <Heading mb={6} textAlign="center">
         Club Details
       </Heading>
-<Divider my={6} size={"md"} />
-      <Box mb={8}  bg={textColorPrimary} p={5} color={"black"} borderRadius={"md"}> 
-        <Heading size="md" mb={4}>
-          Basic Information
-        </Heading>
-        <VStack align="stretch" spacing={4}>
-          <DetailRow label="Name" value={currentClub.name} />
-          <DetailRow label="Phone Number" value={currentClub.phoneNumber} />
-          <DetailRow label="Rating" value={currentClub.rating} />
-          <DetailRow label="Cuisines" value={currentClub.cuisines} />
-          <DetailRow
-            label="Dietary Options"
-            value={currentClub.dietaryOptions}
-          />
-        </VStack>
-      </Box>
 
-      <Divider my={6} size={"md"} />
+      <TableContainer bg={bgColor} borderRadius="lg" boxShadow="md" mb={6}>
+        <Table variant="striped" colorScheme="gray">
+          <Thead bg={tableHeaderBg}>
+            <Tr>
+              <Th>Category</Th>
+              <Th>Details</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            <Tr>
+              <Td fontWeight="bold">Name</Td>
+              <Td>{currentClub.name}</Td>
+            </Tr>
+            <Tr>
+              <Td fontWeight="bold">Phone Number</Td>
+              <Td>{currentClub.phoneNumber}</Td>
+            </Tr>
+            <Tr>
+              <Td fontWeight="bold">Rating</Td>
+              <Td>{currentClub.rating}</Td>
+            </Tr>
+            <Tr>
+              <Td fontWeight="bold">Cuisines</Td>
+              <Td>{currentClub.cuisines?.join(", ")}</Td>
+            </Tr>
+            <Tr>
+              <Td fontWeight="bold">Dietary Options</Td>
+              <Td>{currentClub.dietaryOptions?.join(", ")}</Td>
+            </Tr>
+            <Tr>
+              <Td fontWeight="bold">Venue Type</Td>
+              <Td>{currentClub.venueType}</Td>
+            </Tr>
+            <Tr>
+              <Td fontWeight="bold">Capacity</Td>
+              <Td>{currentClub.capacity}</Td>
+            </Tr>
+            <Tr>
+              <Td fontWeight="bold">Estimated Cost Per Head</Td>
+              <Td>{currentClub.estimatedCostPerHead} AED</Td>
+            </Tr>
+          </Tbody>
+        </Table>
+      </TableContainer>
 
-      <Box mb={8}  bg={textColorPrimary} p={5}  borderRadius={"md"}>
-        <Heading size="md" mb={4} color={"black"}>
-          Additional Details
-        </Heading>
-        <VStack align="stretch" spacing={4} color={textColorSecondary}>
-          <DetailRow label="Categories" value={currentClub.categories} />
-          <DetailRow label="Dress Type" value={currentClub.dressType} />
-          <DetailRow label="Venue Type" value={currentClub.venueType} />
-          <DetailRow label="Capacity" value={currentClub.capacity} />
-          <DetailRow
-            label="Estimated Cost Per Head"
-            value={`${currentClub.estimatedCostPerHead} AED`}
-          />
-        </VStack>
-      </Box>
-
-      <Divider my={6} />
-
-      <Box bg={textColorPrimary} color={"black"} p={4} borderRadius="md">
-        <Heading size="md" mb={4}>
-          Club Seats
-        </Heading>
-        {currentClub.clubSeat.map((seat, index) => (
-          <Box key={index} mb={6}>
-            <Heading size="sm" mb={2}>
-              {seat.name}
-            </Heading>
-            <Grid gap={4}>
+      {/* Club Seats Section */}
+      <Heading size="md" mb={4}>
+        Club Seats
+      </Heading>
+      {currentClub.clubSeat.map((seat, index) => (
+        <TableContainer
+          key={index}
+          bg={bgColor}
+          borderRadius="lg"
+          boxShadow="md"
+          mb={4}
+        >
+          <Table variant="simple">
+            <Thead bg={tableHeaderBg}>
+              <Tr>
+                <Th colSpan={2}>{seat.name}</Th>
+              </Tr>
+              <Tr>
+                <Th>Day</Th>
+                <Th>Operating Hours</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
               {seat.openDays.map((day, dayIndex) => (
-                <DetailRow
-                  key={dayIndex}
-                  label={day.day}
-                  value={`${new Date(
-                    day.slot.opensAt
-                  ).toLocaleTimeString()} - ${new Date(
-                    day.slot.closeAt
-                  ).toLocaleTimeString()}`}
-                />
+                <Tr key={dayIndex}>
+                  <Td>{day.day}</Td>
+                  <Td>
+                    {new Date(day.slot.opensAt).toLocaleTimeString()} -
+                    {new Date(day.slot.closeAt).toLocaleTimeString()}
+                  </Td>
+                </Tr>
               ))}
-            </Grid>
-          </Box>
-        ))}
-      </Box>
+            </Tbody>
+          </Table>
+        </TableContainer>
+      ))}
     </Box>
   );
 }
+
+// Helper Components
+const LoadingSpinner = () => (
+  <Box textAlign="center" mt="20px" w="100%">
+    <Spinner size="xl" />
+    <Text>Loading club details...</Text>
+  </Box>
+);
+
+const ErrorMessage = ({ error }: { error: string }) => (
+  <Box textAlign="center" mt="20px" color="red.500">
+    <Text>{error}</Text>
+  </Box>
+);
+
+const NoClubFound = () => (
+  <Box textAlign="center" mt="20px">
+    <Text>No club found</Text>
+  </Box>
+);
