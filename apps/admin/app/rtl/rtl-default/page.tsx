@@ -77,7 +77,7 @@ export default function UserReports() {
             />
           }
           name="Earnings"
-          value="$350.4"
+          value="$350.40000"
         />
         <MiniStatistics
           startContent={

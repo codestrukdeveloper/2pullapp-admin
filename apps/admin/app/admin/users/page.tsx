@@ -131,19 +131,19 @@ const UserList = () => {
                           aria-label="View"
                           icon={<ViewIcon />}
                           onClick={() => handleView(user.id)}
-                          colorScheme="blue"
+                          
                         />
                         <IconButton
                           aria-label="Edit"
                           icon={<EditIcon />}
                           onClick={() => handleEdit(user.id)}
-                          colorScheme="yellow"
+                          
                         />
                         <IconButton
                           aria-label="Delete"
                           icon={<DeleteIcon />}
                           onClick={() => handleDelete(user.id)}
-                          colorScheme="red"
+                          
                         />
                       </Flex>
                     </Td>

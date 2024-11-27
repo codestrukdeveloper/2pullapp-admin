@@ -21,7 +21,7 @@ import { ItemContent } from 'components/menu/ItemContent';
 import { SearchBar } from 'components/navbar/searchBar/SearchBar';
 import { SidebarResponsive } from 'components/sidebar/Sidebar';
 // Assets
-import navImage from '@/img/layout/Navbar.png';
+import temporaryAvatar from '@/img/avatars/primary.png';
 import { FaEthereum } from 'react-icons/fa';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import { MdInfoOutline, MdNotificationsNone } from 'react-icons/md';
@@ -180,7 +180,7 @@ export default function HeaderLinks(props: {
               borderRadius="8px"
               mb="10px"
             >
-              <ItemContent info="Horizon UI Dashboard PRO" />
+              <ItemContent info="Dashboard" />
             </MenuItem>
             <MenuItem
               _hover={{ bg: 'none' }}
@@ -189,13 +189,13 @@ export default function HeaderLinks(props: {
               borderRadius="8px"
               mb="10px"
             >
-              <ItemContent info="Horizon Design System Free" />
+              <ItemContent info=" Free" />
             </MenuItem>
           </Flex>
         </MenuList>
       </Menu>
 
-      <Menu>
+      {/* <Menu>
         <MenuButton p="0px">
           <Icon
             mt="6px"
@@ -255,7 +255,7 @@ export default function HeaderLinks(props: {
             </Link>
           </Flex>
         </MenuList>
-      </Menu>
+      </Menu> */}
 
       <Button
         variant="no-hover"
@@ -322,7 +322,8 @@ export default function HeaderLinks(props: {
               fontWeight="700"
               color={textColor}
             >
-              👋&nbsp; Hey, {userName}
+
+              👋  Hey, {userName}
             </Text>
           </Flex>
           <Flex flexDirection="column" p="10px">
@@ -357,4 +358,5 @@ export default function HeaderLinks(props: {
       </Menu>
     </Flex>
   );
+
 }

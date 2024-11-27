@@ -1,3 +1,4 @@
+import { border } from "@chakra-ui/system";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 export const switchStyles = {
   components: {

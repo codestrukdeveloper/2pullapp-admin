@@ -39,7 +39,7 @@ export default function AdminLayout (props: DashboardLayoutProps) {
           setToggleSidebar
         }}
       >
-        <Sidebar routes={routes} display='none' {...rest} />
+        <Sidebar routes={routes} {...rest} />
         <Box
           float='right'
           minHeight='100vh'
