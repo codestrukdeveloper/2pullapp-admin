@@ -19,11 +19,13 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
-export default function ClubDetailsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+interface Props {
+  params: {
+    id: string;
+  };
+}
+
+export default function ClubPage({ params }: Props)  {
   const { currentClub, isLoading, error, fetchClubDetails } = useClubStore();
 
   // Background and color theming
