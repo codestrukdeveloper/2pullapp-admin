@@ -59,10 +59,11 @@ const UserList = () => {
     } else {
       const lowerCaseQuery = searchQuery.toLowerCase();
       const filtered = users.filter(
-        (user: { name: string; email: string; phoneNumber: string | string[]; }) =>
+        (user: { name: string; email: string; phoneNumber: string; subscriptionType:string | string[]; }) =>
           user.name.toLowerCase().includes(lowerCaseQuery) ||
           user.email.toLowerCase().includes(lowerCaseQuery) ||
-          user.phoneNumber.includes(lowerCaseQuery)
+          user.phoneNumber.includes(lowerCaseQuery) ||
+        user.subscriptionType.includes(lowerCaseQuery)
       );
       setFilteredUsers(filtered);
     }
@@ -85,7 +86,7 @@ const UserList = () => {
       {/* Color mode toggle */}
       <Flex justify="flex-end" mb={4}>
         <Button onClick={toggleColorMode} variant="ghost">
-          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
         </Button>
       </Flex>
 
@@ -115,6 +116,7 @@ const UserList = () => {
                 <Th>Name</Th>
                 <Th>Email</Th>
                 <Th>Phone Number</Th>
+                <Th>Subscriptions Type</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
@@ -125,25 +127,23 @@ const UserList = () => {
                     <Td>{user.name}</Td>
                     <Td>{user.email}</Td>
                     <Td>{user.phoneNumber}</Td>
+                    <Td>{user.subscriptionType}</Td>
                     <Td>
                       <Flex gap={2}>
                         <IconButton
                           aria-label="View"
                           icon={<ViewIcon />}
                           onClick={() => handleView(user.id)}
-                          
                         />
                         <IconButton
                           aria-label="Edit"
                           icon={<EditIcon />}
                           onClick={() => handleEdit(user.id)}
-                          
                         />
                         <IconButton
                           aria-label="Delete"
                           icon={<DeleteIcon />}
                           onClick={() => handleDelete(user.id)}
-                          
                         />
                       </Flex>
                     </Td>

@@ -93,7 +93,8 @@ export default function Clubs() {
             onChange={(e) => setSearchTerm(e.target.value)}
             maxWidth="400px"
             variant="filled"
-            color={textColorPrimary}
+color={"transparent"}
+border={"1px solid #E2E8F0"}
           />
         </Flex>
       </Box>
