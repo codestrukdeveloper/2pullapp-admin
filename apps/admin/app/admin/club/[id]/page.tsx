@@ -15,7 +15,6 @@ import {
   Th,
   Td,
   TableContainer,
-  Divider,
   useColorModeValue,
 } from "@chakra-ui/react";
 
@@ -25,7 +24,7 @@ interface Props {
   };
 }
 
-export default function ClubPage({ params }: Props)  {
+export default function ClubDetailsPage({ params }: Props) {
   const { currentClub, isLoading, error, fetchClubDetails } = useClubStore();
 
   // Background and color theming
