@@ -21,10 +21,23 @@ import {
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ViewIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 
+
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  subscriptionType: string | string[];
+}
+
+
 const UserList = () => {
   const { users, isLoading, fetchAllUsers, error } = useGetUsers();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  // const [filteredUsers, setFilteredUsers] = useState([]);
+const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+
   const [token, setToken] = useState<string | null>(null);
 
   // Fetch token from localStorage on the client side
@@ -122,7 +135,7 @@ const UserList = () => {
             </Thead>
             <Tbody>
               {filteredUsers && filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
+                filteredUsers.map((user: User) => (
                   <Tr key={user.id}>
                     <Td>{user.name}</Td>
                     <Td>{user.email}</Td>
@@ -131,16 +144,19 @@ const UserList = () => {
                     <Td>
                       <Flex gap={2}>
                         <IconButton
+                          key={`view-${user.id}`}
                           aria-label="View"
                           icon={<ViewIcon />}
                           onClick={() => handleView(user.id)}
                         />
                         <IconButton
+                          key={`edit-${user.id}`}
                           aria-label="Edit"
                           icon={<EditIcon />}
                           onClick={() => handleEdit(user.id)}
                         />
                         <IconButton
+                          key={`delete-${user.id}`}
                           aria-label="Delete"
                           icon={<DeleteIcon />}
                           onClick={() => handleDelete(user.id)}
@@ -151,7 +167,7 @@ const UserList = () => {
                 ))
               ) : (
                 <Tr>
-                  <Td colSpan={4} textAlign="center">
+                  <Td colSpan={5} textAlign="center">
                     No users found
                   </Td>
                 </Tr>
