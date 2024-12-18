@@ -166,15 +166,15 @@ const SidebarContent: React.FC<ContentProps> = ({ routes }) => {
 
   return (
     <Box mt={5} mb={5}>
-      <Flex color={textColor}
+      <Flex
+        color={textColor}
         placeItems={"center"}
         alignItems={"center"}
         justifyContent={"center"}
       >
         <Text size={"md"}>Brand</Text>
-        
       </Flex>
-<Divider/>
+      <Divider />
       {routes.map((route, index) => renderRouteItem(route, index))}
     </Box>
   );

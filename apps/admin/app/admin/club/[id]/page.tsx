@@ -16,6 +16,7 @@ import {
   Td,
   TableContainer,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
 
 interface Props {
@@ -138,19 +139,25 @@ export default function ClubDetailsPage({ params }: Props) {
 // Helper Components
 const LoadingSpinner = () => (
   <Box textAlign="center" mt="20px" w="100%">
+    <Flex justifyContent="center" alignItems="center" flexDirection="column">
     <Spinner size="xl" />
-    <Text>Loading club details...</Text>
+      <Text>Loading club details...</Text>
+      </Flex>
   </Box>
 );
 
 const ErrorMessage = ({ error }: { error: string }) => (
   <Box textAlign="center" mt="20px" color="red.500">
+       <Flex justifyContent="center" alignItems="center" flexDirection="column">
     <Text>{error}</Text>
+    </Flex>
   </Box>
 );
 
 const NoClubFound = () => (
   <Box textAlign="center" mt="20px">
+       <Flex justifyContent="center" alignItems="center" flexDirection="column">
     <Text>No club found</Text>
+</Flex>
   </Box>
 );

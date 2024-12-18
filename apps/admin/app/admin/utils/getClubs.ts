@@ -15,6 +15,7 @@ interface ClubState {
   totalPages: number;
   currentPage: number;
   isLoading: boolean;
+  totalClubs: number;
   error: string | null;
   fetchClubs: (token: string, page: number) => Promise<void>;
 }
@@ -25,7 +26,7 @@ export const useGetClubs = create<ClubState>((set) => ({
   currentPage: 1,
   isLoading: false,
   error: null,
-
+  totalClubs: 0,
   fetchClubs: async (token: string, page: number) => {
     set({ isLoading: true, error: null });
 
@@ -40,12 +41,12 @@ export const useGetClubs = create<ClubState>((set) => ({
         }
       );
 
-      const { clubs, totalPages, currentPage } = response.data.data;
+      const { clubs, totalClubs, totalPages, currentPage } = response.data.data;
 
       set({
         clubs,
         totalPages,
-        currentPage,
+        currentPage,totalClubs,
         isLoading: false,
         error: null,
       });

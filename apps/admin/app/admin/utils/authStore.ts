@@ -37,7 +37,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       // Call the onSuccess callback to trigger redirection
     if (onSuccess) onSuccess();
     } catch (error: any) {
-      console.log(error);
+      // console.log(error);
       set({ error: 'Invalid Phone Number or Password!', isLoading: false });
     }
   },
@@ -50,12 +50,12 @@ export const useAuthStore = create<AuthState>((set) => ({
         headers: { Authorization: `Bearer ${token}` },
       });
       const user = response.data.data;
-      console.log(user);
+      // console.log(user);
       set({ user, isLoading: false });
       return user;
     } catch (error: any) {
       set({ error: error.response?.data?.message || 'Failed to fetch user profile', isLoading: false });
-      console.error('Error fetching profile:', error);
+      // console.error('Error fetching profile:', error);
     }
   },
 

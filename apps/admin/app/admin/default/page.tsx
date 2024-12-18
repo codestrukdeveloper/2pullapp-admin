@@ -42,8 +42,8 @@ export default function Default() {
   );
 
   // Store Hooks
-  const { users, fetchAllUsers, isLoading: isUsersLoading } = useGetUsers();
-  const { clubs, fetchClubs, isLoading: isClubsLoading } = useGetClubs();
+  const { totalUsers, fetchAllUsers, isLoading: isUsersLoading } = useGetUsers();
+  const { totalClubs, fetchClubs, isLoading: isClubsLoading } = useGetClubs();
   const { revenue, fetchRevenue } = useGetRevenue();
   const { token } = useAuthStore();
 
@@ -123,7 +123,7 @@ export default function Default() {
             />
           }
           name="Total Users"
-          value={isUsersLoading ? "Loading..." : users.length.toString()}
+          value={isUsersLoading ? "Loading..." : totalUsers.toString()}
         />
 
         {/* Total Clubs */}
@@ -143,7 +143,7 @@ export default function Default() {
             />
           }
           name="Total Clubs"
-          value={isClubsLoading ? "Loading..." : clubs.length.toString()}
+          value={isClubsLoading ? "Loading..." : totalClubs.toString()}
         />
 
         {/* Total Revenue */}

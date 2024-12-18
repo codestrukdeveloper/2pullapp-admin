@@ -31,12 +31,13 @@ interface User {
 }
 
 interface AuthState {
-    users: User[];
-    userDetails: User | null;
-    isLoading: boolean;
-    error: string | null;
-    fetchAllUsers: (token: string) => Promise<void>;
-    fetchUserById: (id: string, token: string) => Promise<void>;
+  users: User[];
+  userDetails: User | null;
+  isLoading: boolean;
+  error: string | null;
+  fetchAllUsers: (token: string) => Promise<void>;
+  fetchUserById: (id: string, token: string) => Promise<void>;
+  totalUsers:number
 }
 
 export const useGetUsers = create<AuthState>((set) => ({
@@ -44,7 +45,7 @@ export const useGetUsers = create<AuthState>((set) => ({
     userDetails: null,
     isLoading: false,
     error: null,
-
+totalUsers:0,
     // Function to fetch all users
     fetchAllUsers: async (token) => {
         set({ isLoading: true });
@@ -53,7 +54,7 @@ export const useGetUsers = create<AuthState>((set) => ({
                 headers: { Authorization: `Bearer ${token}` },
             });
             const users = response.data.data.users;
-            set({ users, isLoading: false });
+            set({  users, isLoading: false, totalUsers: response.data.data.totalUsers });
         } catch (error: any) {
             set({ error: error.response?.data?.message || 'Failed to fetch users', isLoading: false });
         }
