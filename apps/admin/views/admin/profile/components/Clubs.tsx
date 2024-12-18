@@ -1,29 +1,26 @@
-import { useColorModeValue } from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import {
+  useColorModeValue,
+  Box,
+  Button,
+  HStack,
+  Spinner,
+  Text,
+  VStack,
+  Input,
+  Flex,
+} from "@chakra-ui/react";
 import Card from "components/card/Card";
+import { useGetClubs } from "@/app/admin/utils/getClubs";
 import Club from "@/views/admin/profile/components/Club";
-import { Box, Button, HStack, VStack, Text, Spinner } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useGetClubs } from "@/app/admin/utils/getClubs"; // Make sure the path is correct
 
-export default function Clubs(props: { [x: string]: any }) {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+export default function Clubs() {
+  const { clubs, totalPages, currentPage, isLoading, error, fetchClubs } =
+    useGetClubs();
 
-  const { clubs, error: fetchError, isLoading: loading } = useGetClubs();
-
-  const postsPerPage: number = 10;
-
-  // Calculate total pages
-  const totalPages = Math.ceil(clubs.length / postsPerPage);
-
-  // Get current posts for the page
-  const currentPosts = clubs.slice(
-    (currentPage - 1) * postsPerPage,
-    currentPage * postsPerPage
-  );
-
-  const { ...rest } = props;
+  // State for filtering
+  const [filteredClubs, setFilteredClubs] = useState(clubs);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
@@ -32,30 +29,38 @@ export default function Clubs(props: { [x: string]: any }) {
     "unset"
   );
 
+  // Effect to update filtered clubs when clubs or search term changes
   useEffect(() => {
-    setIsLoading(loading);
-    if (fetchError) {
-      setError(fetchError);
-    } else if (clubs) {
-      setError(null);
+    const filtered = clubs.filter((club) =>
+      club.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredClubs(filtered);
+  }, [clubs, searchTerm]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchClubs(token, currentPage).catch((err) =>
+        console.error("Fetch failed:", err)
+      );
+    } else {
+      console.error("No token found.");
     }
-  }, [loading, fetchError, clubs]);
+  }, [fetchClubs, currentPage]);
 
-  const handleNext = (): void =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  const handlePrev = (): void =>
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-
-  const handlePageClick = (page: number): void => {
-    setCurrentPage(page);
+  const handlePageChange = (newPage: number) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchClubs(token, newPage);
+    }
   };
 
   const renderPageNumbers = () => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-    return pageNumbers.map((page) => (
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    return pages.map((page) => (
       <Button
         key={page}
-        onClick={() => handlePageClick(page)}
+        onClick={() => handlePageChange(page)}
         variant={page === currentPage ? "solid" : "outline"}
         colorScheme="blue"
         size="sm"
@@ -66,22 +71,41 @@ export default function Clubs(props: { [x: string]: any }) {
   };
 
   return (
-    <Card mb={{ base: "0px", "2xl": "20px" }} {...rest}>
-      <Text
-        color={textColorPrimary}
-        fontWeight="bold"
-        fontSize="2xl"
-        mt="10px"
-        mb="4px"
+    <Card mb={{ base: "0px", "2xl": "20px" }}>
+      <Box
+        flexDirection={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
       >
-        All Clubs
-      </Text>
-      <Text color={textColorSecondary} fontSize="md" me="26px" mb="40px">
+        <Flex mb={4} justifyContent="space-between">
+          <Text
+            color={textColorPrimary}
+            fontWeight="bold"
+            fontSize="2xl"
+            mt="10px"
+            mb="4px"
+          >
+            All Clubs
+          </Text>
+          <Input
+            placeholder="Search clubs by name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            maxWidth="400px"
+            variant="filled"
+color={"transparent"}
+border={"1px solid #E2E8F0"}
+          />
+        </Flex>
+      </Box>
+      <Text color={textColorSecondary} fontSize="md" mb="40px">
         Here you can find more details about your clubs. Keep your users engaged
         by providing meaningful information.
       </Text>
 
-      {/* Loading State */}
+      {/* Search/Filter Input */}
+
+      {/* in case  Loading */}
       {isLoading && (
         <Box textAlign="center" mt="20px">
           <Spinner size="lg" />
@@ -89,44 +113,42 @@ export default function Clubs(props: { [x: string]: any }) {
         </Box>
       )}
 
-      {/* Error State */}
       {error && (
         <Box textAlign="center" mt="20px" color="red.500">
           <Text>{error}</Text>
         </Box>
       )}
 
-      {/* Clubs Display */}
-      {!isLoading && !error && clubs.length > 0 && (
+      {!isLoading && !error && filteredClubs.length > 0 && (
         <Box>
-          {currentPosts.map((club) => (
+          {filteredClubs.map((club) => (
             <Club
-              key={club.id}
+              key={club._id}
               boxShadow={cardShadow}
-              image={club.image || "/default-club.png"} // Provide a default image if none exists
-              ranking={club.ranking || "N/A"}
-              link={club.link || "#"}
+              image={club.thumbnail}
               title={club.name}
-              subtitle={club.description || "No description available"}
+              subtitle={club.categories.join(", ") || "No categories available"}
+              rating={club.rating || "N/A"}
+              ranking={club.rating}
+              link={`/admin/club/${club._id}`}
             />
           ))}
         </Box>
       )}
 
-      {/* Pagination Section */}
-      {!isLoading && clubs.length > 0 && (
+      {/* if result not found  */}
+
+      {!isLoading && filteredClubs.length === 0 && (
+        <Box textAlign="center" mt="20px" color={textColorSecondary}>
+          <Text>No clubs found matching your search.</Text>
+        </Box>
+      )}
+
+      {/* pagination stared  */}
+      {!isLoading && filteredClubs.length > 0 && (
         <VStack spacing={4} mt="20px">
           <HStack spacing={2} justify="center">
-            <Button onClick={handlePrev} isDisabled={currentPage === 1}>
-              Previous
-            </Button>
             {renderPageNumbers()}
-            <Button
-              onClick={handleNext}
-              isDisabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
           </HStack>
           <Text>
             Page {currentPage} of {totalPages}

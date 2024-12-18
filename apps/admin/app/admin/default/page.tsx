@@ -1,144 +1,203 @@
-'use client';
-/*!
-  _   _  ___  ____  ___ ________  _   _   _   _ ___   
- | | | |/ _ \|  _ \|_ _|__  / _ \| \ | | | | | |_ _| 
- | |_| | | | | |_) || |  / / | | |  \| | | | | || | 
- |  _  | |_| |  _ < | | / /| |_| | |\  | | |_| || |
- |_| |_|\___/|_| \_\___/____\___/|_| \_|  \___/|___|
-                                                                                                                                                                                                                                                                                                                                       
-=========================================================
-* Horizon UI - v1.1.0
-=========================================================
-
-* Product Page: https://www.horizon-ui.com/
-* Copyright 2022 Horizon UI (https://www.horizon-ui.com/)
-
-* Designed and Coded by Simmmple
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
+"use client";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import {
   Box,
-  Flex,
-  FormLabel,
-  Image,
-  Icon,
-  Select,
   SimpleGrid,
   useColorModeValue,
-} from '@chakra-ui/react';
-// Custom components
-// import MiniCalendar from 'components/calendar/MiniCalendar';
-import MiniStatistics from 'components/card/MiniStatistics';
-import IconBox from 'components/icons/IconBox';
+  HStack,
+  Button,
+  VStack,
+} from "@chakra-ui/react";
+
+// Icons
 import {
-  MdAddTask,
+  MdPeople,
+  MdBusinessCenter,
   MdAttachMoney,
   MdBarChart,
+  MdAttachMoney as MdSpend,
   MdFileCopy,
-} from 'react-icons/md';
-import CheckTable from 'views/admin/default/components/CheckTable';
-import ComplexTable from 'views/admin/default/components/ComplexTable';
-import DailyTraffic from 'views/admin/default/components/DailyTraffic';
-import PieCard from 'views/admin/default/components/PieCard';
-import Tasks from 'views/admin/default/components/Tasks';
-import TotalSpent from 'views/admin/default/components/TotalSpent';
-import WeeklyRevenue from 'views/admin/default/components/WeeklyRevenue';
-import tableDataCheck from 'views/admin/default/variables/tableDataCheck';
-import tableDataComplex from 'views/admin/default/variables/tableDataComplex';
-// Assets
-import Usa from 'img/dashboards/usa.png';
+} from "react-icons/md";
+
+// Custom Components
+import MiniStatistics from "components/card/MiniStatistics";
+import IconBox from "components/icons/IconBox";
+
+
+// Dynamic ApexCharts Import
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+
+// Store Imports
+import { useGetUsers } from "../utils/getUsers";
+import { useGetClubs } from "../utils/getClubs";
+import { useGetRevenue } from "../utils/getRevenue";
+import { useAuthStore } from "../utils/authStore";
+import { ApexOptions } from "apexcharts";
 
 export default function Default() {
-  // Chakra Color Mode
+  // State Management
+  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">(
+    "monthly"
+  );
 
-  const brandColor = useColorModeValue('brand.500', 'white');
-  const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
+  // Store Hooks
+  const { totalUsers, fetchAllUsers, isLoading: isUsersLoading } = useGetUsers();
+  const { totalClubs, fetchClubs, isLoading: isClubsLoading } = useGetClubs();
+  const { revenue, fetchRevenue } = useGetRevenue();
+  const { token } = useAuthStore();
+
+  // Color Modes
+  const brandColor = useColorModeValue("brand.100", "white");
+  const boxBg = useColorModeValue("secondaryGray.500", "black");
+
+  // Data Fetching
+  useEffect(() => {
+    if (token) {
+      fetchAllUsers(token);
+      fetchClubs(token, 1);
+      fetchRevenue(token, period);
+    }
+  }, [token, period]);
+
+  const chartOptions: ApexOptions = {
+    chart: {
+      type: "bar" as const,
+      height: 250,
+      
+      toolbar: {
+        show: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: "10%",
+        borderRadius: 5,
+      },
+    },
+
+    xaxis: {
+      categories: ["Current Revenue", "Previous Revenue"],
+    },
+    tooltip: {
+      y: {
+        formatter: (val: number) => `$ ${val}`,
+      },
+    },
+    title: {
+      text: `${period.charAt(0).toUpperCase() + period.slice(1)} Revenue`,
+      align: "center",
+      style: {
+        fontSize: "20px",
+        fontWeight: "bold",
+        color: brandColor,
+      }
+    },
+  
+  };
+
+  const chartSeries = [
+    {
+      name: "Revenue",
+      data: [revenue?.currentRevenue || 5, revenue?.previousRevenue || 10],
+    },
+  ];
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+      {/* Overview Statistics */}
       <SimpleGrid
-        columns={{ base: 1, md: 2, lg: 3, '2xl': 6 }}
+        columns={{ base: 1, md: 2, lg: 3, "2xl": 6 }}
         gap="20px"
         mb="20px"
       >
+        {/* Total Users */}
         <MiniStatistics
           startContent={
             <IconBox
-              w="56px"
-              h="56px"
+              width="56px"
+              height="56px"
+              bg={boxBg}
+              icon={<MdPeople width="32px" height="32px" color={brandColor} />}
+            />
+          }
+          name="Total Users"
+          value={isUsersLoading ? "Loading..." : totalUsers.toString()}
+        />
+
+        {/* Total Clubs */}
+        <MiniStatistics
+          startContent={
+            <IconBox
+              width="56px"
+              height="56px"
               bg={boxBg}
               icon={
-                <Icon w="32px" h="32px" as={MdBarChart} color={brandColor} />
+                <MdBusinessCenter
+                  width="32px"
+                  height="32px"
+                  color={brandColor}
+                />
+              }
+            />
+          }
+          name="Total Clubs"
+          value={isClubsLoading ? "Loading..." : totalClubs.toString()}
+        />
+
+        {/* Total Revenue */}
+        <MiniStatistics
+          startContent={
+            <IconBox
+              width="56px"
+              height="56px"
+              bg={boxBg}
+              icon={
+                <MdAttachMoney width="32px" height="32px" color={brandColor} />
+              }
+            />
+          }
+          name="Total Revenue"
+
+          value={`${revenue?.currentRevenue || 0}`}
+        />
+
+        {/* Existing Statistics */}
+        <MiniStatistics
+          startContent={
+            <IconBox
+              width="56px"
+              height="56px"
+              bg={boxBg}
+              icon={
+                <MdBarChart width="32px" height="32px" color={brandColor} />
               }
             />
           }
           name="Earnings"
-          value="$350.4"
+          value="$350.400"
         />
         <MiniStatistics
           startContent={
             <IconBox
-              w="56px"
-              h="56px"
+              width="56px"
+              height="56px"
               bg={boxBg}
-              icon={
-                <Icon w="32px" h="32px" as={MdAttachMoney} color={brandColor} />
-              }
+              icon={<MdSpend width="32px" height="32px" color={brandColor} />}
             />
           }
           name="Spend this month"
           value="$642.39"
         />
-        <MiniStatistics growth="+23%" name="Sales" value="$574.34" />
-        <MiniStatistics
-          endContent={
-            <Flex me="-16px" mt="10px">
-              <FormLabel htmlFor="balance">
-                <Box boxSize={'12'}>
-                  <Image alt="" src={Usa.src} w={'100%'} h={'100%'} />
-                </Box>
-              </FormLabel>
-              <Select
-                id="balance"
-                variant="mini"
-                mt="5px"
-                me="0px"
-                defaultValue="usd"
-              >
-                <option value="usd">USD</option>
-                <option value="eur">EUR</option>
-                <option value="gba">GBA</option>
-              </Select>
-            </Flex>
-          }
-          name="Your balance"
-          value="$1,000"
-        />
         <MiniStatistics
           startContent={
             <IconBox
-              w="56px"
-              h="56px"
-              bg="linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)"
-              icon={<Icon w="28px" h="28px" as={MdAddTask} color="white" />}
-            />
-          }
-          name="New Tasks"
-          value="154"
-        />
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w="56px"
-              h="56px"
+              width="56px"
+              height="56px"
               bg={boxBg}
               icon={
-                <Icon w="32px" h="32px" as={MdFileCopy} color={brandColor} />
+                <MdFileCopy width="32px" height="32px" color={brandColor} />
               }
             />
           }
@@ -147,24 +206,36 @@ export default function Default() {
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="20px">
-        <TotalSpent />
-        <WeeklyRevenue />
-      </SimpleGrid>
-      <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap="20px" mb="20px">
-        <CheckTable tableData={tableDataCheck} />
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px">
-          <DailyTraffic />
-          <PieCard />
-        </SimpleGrid>
-      </SimpleGrid>
-      <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap="20px" mb="20px">
-        <ComplexTable tableData={tableDataComplex} />
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px">
-          <Tasks />
-          {/* <MiniCalendar h="100%" minW="100%" selectRange={false} /> */}
-        </SimpleGrid>
-      </SimpleGrid>
+      {/* Revenue Chart Section */}
+      <VStack width="100%" spacing={4}>
+        {/* Period Switching Buttons */}
+        <HStack justifyContent="center" spacing={4} width="full">
+          {["Daily", "Weekly", "Monthly"].map((periodOption) => (
+            <Button
+              color={"white"}
+              key={periodOption}
+              onClick={() => setPeriod(periodOption.toLowerCase() as any)}
+              colorScheme={
+                period === periodOption.toLowerCase() ? "blue" : "gray"
+              }
+              variant="solid"
+            >
+              {periodOption}
+            </Button>
+          ))}
+        </HStack>
+
+        <Box width="100%" mt="20px">
+          <Chart
+            options={chartOptions}
+            series={chartSeries}
+            type="bar"
+            height={350}
+          />
+        </Box>
+      </VStack>
+
+ 
     </Box>
   );
 }

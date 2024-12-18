@@ -51,7 +51,7 @@ export default function Banner(props: {
             {posts}
           </Text>
           <Text color={textColorSecondary} fontSize="sm" fontWeight="400">
-            Posts
+            Clubs
           </Text>
         </Flex>
         <Flex mx="auto" me="60px" alignItems="center" flexDirection="column">
@@ -59,7 +59,7 @@ export default function Banner(props: {
             {followers}
           </Text>
           <Text color={textColorSecondary} fontSize="sm" fontWeight="400">
-            Followers
+            No. Users
           </Text>
         </Flex>
         <Flex mx="auto" alignItems="center" flexDirection="column">

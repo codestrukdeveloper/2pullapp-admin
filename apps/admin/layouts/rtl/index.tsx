@@ -32,7 +32,8 @@ export default function RTLLayout(props: RTLLayoutProps) {
 						toggleSidebar,
 						setToggleSidebar
 					}}>
-					<Sidebar routes={routes} display='none' {...rest} />
+
+					<Sidebar routes={routes} {...rest} />
 					<Box
 						float='left'
 						minHeight='100vh'

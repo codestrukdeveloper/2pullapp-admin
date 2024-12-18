@@ -62,7 +62,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
                       }
                       me="18px"
                     >
-                      {route.icon}
+                      {route.icon && <route.icon />}
                     </Box>
                     <Text
                       me="auto"
@@ -121,8 +121,7 @@ export function SidebarLinks(props: SidebarLinksProps) {
           </Link>
         );
       }
-    });
-  };
+    });  };
   //  BRAND
   return <>{createLinks(routes)}</>;
 }

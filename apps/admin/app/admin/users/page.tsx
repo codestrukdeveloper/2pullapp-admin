@@ -21,10 +21,23 @@ import {
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ViewIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 
+
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  subscriptionType: string | string[];
+}
+
+
 const UserList = () => {
   const { users, isLoading, fetchAllUsers, error } = useGetUsers();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  // const [filteredUsers, setFilteredUsers] = useState([]);
+const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+
   const [token, setToken] = useState<string | null>(null);
 
   // Fetch token from localStorage on the client side
@@ -59,10 +72,11 @@ const UserList = () => {
     } else {
       const lowerCaseQuery = searchQuery.toLowerCase();
       const filtered = users.filter(
-        (user: { name: string; email: string; phoneNumber: string | string[]; }) =>
+        (user: { name: string; email: string; phoneNumber: string; subscriptionType:string | string[]; }) =>
           user.name.toLowerCase().includes(lowerCaseQuery) ||
           user.email.toLowerCase().includes(lowerCaseQuery) ||
-          user.phoneNumber.includes(lowerCaseQuery)
+          user.phoneNumber.includes(lowerCaseQuery) ||
+        user.subscriptionType.includes(lowerCaseQuery)
       );
       setFilteredUsers(filtered);
     }
@@ -85,7 +99,7 @@ const UserList = () => {
       {/* Color mode toggle */}
       <Flex justify="flex-end" mb={4}>
         <Button onClick={toggleColorMode} variant="ghost">
-          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
         </Button>
       </Flex>
 
@@ -115,35 +129,37 @@ const UserList = () => {
                 <Th>Name</Th>
                 <Th>Email</Th>
                 <Th>Phone Number</Th>
+                <Th>Subscriptions Type</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {filteredUsers && filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
+                filteredUsers.map((user: User) => (
                   <Tr key={user.id}>
                     <Td>{user.name}</Td>
                     <Td>{user.email}</Td>
                     <Td>{user.phoneNumber}</Td>
+                    <Td>{user.subscriptionType}</Td>
                     <Td>
                       <Flex gap={2}>
                         <IconButton
+                          key={`view-${user.id}`}
                           aria-label="View"
                           icon={<ViewIcon />}
                           onClick={() => handleView(user.id)}
-                          colorScheme="blue"
                         />
                         <IconButton
+                          key={`edit-${user.id}`}
                           aria-label="Edit"
                           icon={<EditIcon />}
                           onClick={() => handleEdit(user.id)}
-                          colorScheme="yellow"
                         />
                         <IconButton
+                          key={`delete-${user.id}`}
                           aria-label="Delete"
                           icon={<DeleteIcon />}
                           onClick={() => handleDelete(user.id)}
-                          colorScheme="red"
                         />
                       </Flex>
                     </Td>
@@ -151,7 +167,7 @@ const UserList = () => {
                 ))
               ) : (
                 <Tr>
-                  <Td colSpan={4} textAlign="center">
+                  <Td colSpan={5} textAlign="center">
                     No users found
                   </Td>
                 </Tr>

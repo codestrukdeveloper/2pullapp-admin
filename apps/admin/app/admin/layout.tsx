@@ -46,7 +46,10 @@ export default function AdminLayout(props: DashboardLayoutProps) {
           setToggleSidebar,
         }}
       >
-        <Sidebar routes={routes} display="none" {...rest} />
+        <Sidebar routes={routes}
+          // display="none"
+          {...rest}
+        />
         <Box
           float="right"
           minHeight="100vh"
@@ -65,7 +68,7 @@ export default function AdminLayout(props: DashboardLayoutProps) {
             <Box>
               <Navbar
                 onOpen={onOpen}
-                logoText={'Horizon UI Dashboard PRO'}
+                logoText={'Brand'}
                 brandText={getActiveRoute(routes)}
                 secondary={getActiveNavbar(routes)}
                 message={getActiveNavbarText(routes)}
